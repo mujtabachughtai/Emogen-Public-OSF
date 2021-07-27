@@ -1,0 +1,45 @@
+By downloading, copying, installing or using the software and its supporting assests you agree to this licence.
+If you do not agree to this licence, do not download, install, copy or use the software and its supporting assests.
+
+                                                                 Licence Agreement
+                                                    For EmoGen Tool and its supporting assets
+
+Developers: 
+Nadejda Roubtsova, Darren Cosker and Kyle Reed
+Centre for the Analysis of Motion, Entertainment Research and Applications (CAMERA), University of Bath
+
+EmoGen Tool is provided as a set of source code files, a compilation script installing the tool itself and supporting third-party libraries (*) 
+and a configuration script to run the tool.
+
+The supporting assets are all the additional data files supplied with the tool and required to run it. These include, but are not limited to, 3D mesh files (e.g. .obj, textures etc), binary and text files in /data/.
+
+The tool may be used strictly for non-commercial purposes (e.g. academic research) only. 
+The supporting assets may only be used in conjuction with the tool and not for any other purpose, commercial or otherwise.
+
+Any publication involving the use of the tool must cite us as its developers.
+
+The source code and the supporting assets cannot be redistributed in any form.
+
+This software  and the supporting assets are provided by the developers "as is" and any express or implied warranties, including, but not limited to, 
+the implied warranties of merchantability and fitness for a particular purpose are disclaimed. In no event shall the developers be liable 
+for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute 
+goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, 
+strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
+
+
+(*) Third party copyrights are property of their respective owners.  Third-party dependencies are licensed separately.
+
+EmoGen tool uses GTKmm licensed under GNU LGPL (https://www.gnu.org/licenses/lgpl-3.0.html), see also GNU GPL (https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+EmoGen tool uses texture font Holstein.DDS (can be found in EmoGen_tool/common/) was taken from http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-11-2d-text/
+All tutorial material of www.opengl-tutorial.org is released under CC-BY-NC-ND: http://www.opengl-tutorial.org/download/,
+see also https://creativecommons.org/licenses/by-nc-nd/3.0/fr/deed.en
+
+
+
+
+
+
+
+
+
