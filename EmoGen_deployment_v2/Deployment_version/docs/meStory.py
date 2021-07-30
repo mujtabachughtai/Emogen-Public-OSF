@@ -72,7 +72,7 @@ class Story:
 			titleFile = open(".title", 'w')
 			titleFile.write("[contents](index.html)\n")
 			if( kc > 0 ):
-				titleFile.write("[previous chapter](%04d_%s.html)\n\n"%(chapKeys[kc-1], self.chapters[ chapKeys[kc-1] ].title ) )
+				titleFile.write("[previous chapter](%04d.html)\n\n"%(chapKeys[kc-1]) )
 			titleFile.write("\n")
 			titleFile.write("# %s\n"%self.chapters[k].title )
 			titleFile.close()
