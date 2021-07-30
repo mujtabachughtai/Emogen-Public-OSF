@@ -47,22 +47,12 @@ The launcher/configuration script provides options for configuring how the tool 
 
 
 
-## Code review
 
-The `EmoGen_tool` code is divided among the following C++ source files:
-
- 1) `main.cpp`: contains the `main()` function, creates the user interfaces, handles the main interaction loop and face generations and OpenGL rendering.
- 2) `data.hpp` and `data.cpp`: Defines the `data` class. This maintains the current and previous generation of faces, as well as defining various hard-coded parameters.
- 3) `utility.hpp` and `utility.cpp`: Provides a number of core utility functions for face generation.
- 4) `box_multiwidget.hpp` and `box_multiwidget.cpp`: Defines the GTKmm GUI widget which allows the user to select faces and iterate generations.
- 5) `CorrectiveWeightsAnalytic.hpp` and `CorrectiveWeightsAnalytic.cpp`: Provides the Ceres solver cost function used for correcting teeth and lip collisions in the relevant utility function `utility::correct_lip_and_teeth_collisions()`
- 6) `common/`: Directory containing various rendering utilities such as shader handling, shaders, texture handling, etc.
  
 ### Overview of program flow
  
-**Can we get a basic system diagram** - just use something like <http://draw.io> and shove a `.png` in the imgs directory and reference it here as:
  
-![System diagram](imgs/emogent_system_diagram.png){ width=80% }\
+![Basic system diagram](imgs/emogen-sysDiagram.png){ width=80% }\
  
  
 

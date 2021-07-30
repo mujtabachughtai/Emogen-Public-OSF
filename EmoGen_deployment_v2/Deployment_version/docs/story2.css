@@ -84,14 +84,13 @@ x:-o-prefocus, hr:after {
   content: "";
 }
 
-/* for the monospaced sections of in-weave communication we abuse the html <code> tag,
- * because we abused the commonmark markup for code as well :)
- * By default, this does not wrap, so we want to change that!
- * took a wee bit of hunting to find this!
- */
-pre, code 
-{
-	white-space: pre-wrap !important; 
+
+code, pre {
+	word-wrap: break-word;
+	white-space: pre;
+	overflow-x: auto;
+	font-size: 0.95em;
+	line-height: 1.5;
 }
 
 /* format the images. Pandoc puts them in a <figure> tag. */

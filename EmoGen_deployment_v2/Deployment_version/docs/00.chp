@@ -10,7 +10,7 @@ The EmoGen repository provides C++ software tools for the EmoGen project, full d
 The repository consists of two tools.
 
   1) EmoGen_tool: This is an interactive tool that allows a user to generate faces that portray a desired emotional state.
-  2) ApplyBlendweights: **This is a tool to... ?**
+  2) ApplyBlendweights: Given the parameters (weights) that define the pose/expression of a face, this renders and image of that face
 
 Both tools are typically run using the relevant bash script, where the script also serves as a configuration file.
   
