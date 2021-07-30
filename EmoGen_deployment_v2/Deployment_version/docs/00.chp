@@ -1,0 +1,59 @@
+
+## Overview
+
+The EmoGen repository provides C++ software tools for the EmoGen project, full details of which can be found in the following publications:
+
+  1) [EmoGen: Quantifiable Emotion Generation and Analysis forExperimental Psychology]( https://arxiv.org/abs/2107.00480 )
+
+## Tools
+
+The repository consists of two tools.
+
+  1) EmoGen_tool: This is an interactive tool that allows a user to generate faces that portray a desired emotional state.
+  2) ApplyBlendweights: **This is a tool to... ?**
+
+Both tools are typically run using the relevant bash script, where the script also serves as a configuration file.
+  
+## Installation
+
+The source can be pulled from the CAMERA git server:
+
+    $ git clone camera@rivendell.cs.bath.ac.uk:emoGen
+
+The tools are known to compile and are tested on Ubuntu 18.04.
+
+### Dependencies
+
+The following dependencies must be installed for correct compilation. A script is provided to preinstall required dependencies on a clean Ubuntu system. You may want to do these dependencies manually if not using a clean system.
+
+    $ ./deployment/EmoGen_tool_install.sh
+  
+Note that there are specific versions of the Ceres solver and the assimp library provided as part of the repository. Equally, a specific version of OpenCV is also preferred (3.2.0).
+
+**Why are these specific versions preferred?**
+
+### Compilation
+
+The `EmoGen_tool` and `ApplyBlendweights` tool are compiled seperately using `CMake` to prepare the build. The usual CMake recipe is thus followed:
+
+```
+  $ cd EmoGen_tool 
+  $ mkdir build
+  $ cd build
+  $ cmake ../
+  $ make
+```
+
+And likewise for the `ApplyBlendweights` tool:
+
+```
+  $ cd ApplyBlendweights
+  $ mkdir build
+  $ cd build
+  $ cmake ../
+  $ make
+```
+
+Specific instructions relating to the EmoGen tool and the ApplyBlendweights tool are provided in the following sections.
+ 
+

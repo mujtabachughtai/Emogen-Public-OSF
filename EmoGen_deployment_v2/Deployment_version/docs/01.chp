@@ -1,0 +1,69 @@
+## Overview of the tool
+
+The purpose of this tool is to have a user interactively generate face models that portray a target emotion. 
+
+The tool uses a face model which can be posed by adjusting a set of parameters, allowing the face to display a wide range of expressions. The tool uses this model to present to the user a set (population) of faces with different expressions. The user can then identify which, if any, of these faces represent the emotion the user wants to produce (either exactly of approximately). Based on the user's selections, the tool can then generate a new population of faces using a genetic algorithm. By iteratively presenting faces to the user and generating new faces, the tool can be guided to produce faces that agree with that user's expectations of a face portraying the target emotion.
+
+
+## Basic tool use
+
+
+The tool must be started using the provided script (or a variation of it):
+
+```
+    ./run_tool.sh
+```
+
+This script serves as a configuration file and launcher - it specifies various configuration parameters and launches the actual `EmoGen_tool/build/run_tool` binary with a long list of command line arguments corresponding to those configuration parameters.
+
+Once the tool starts it creates two GUI windows. The larger window is created using GLFW and is an OpenGL context. This window displays an population of rendered faces, each one using a different set of parameters. The second window is a typical GUI window created using GTKmm (the C++ interface to GTK+).
+
+Use of the tool follows the pattern:
+
+  1) The user looks at and analyses the faces presented in the GLFW window
+  2) The user uses the GTKmm GUI window to specify:
+     1) which faces show the target emotion (in the user's opinion)
+     2) the face(s) that *best* show that emotion
+     3) any faces which have an unrealistic appearance (termed "Monsters")
+  3) The user finalises their selection by pressing the "Next generation" button.
+  4) The tool uses the information from the user to update the faces, then presents a new generation of faces.
+  5) The user repeats the process of selecting faces/monsters until they close the tool or reach the maximum number of generations.
+
+Buttons are also provided for the user to quit or to reset the session. Resetting the session does **what? (this seems to be configurable too?)**  
+
+
+More specific details on the use cases of the tool are provided in the publications **Is this true?**
+
+
+
+
+## Detailed configuration information
+
+The launcher/configuration script provides options for configuring how the tool runs. These include basic options such as selecting a male or female model, as well as more specific options regarding the appearance of the faces, the rendering window, and experimental protocols.
+
+**Question: Are these things explained enough in the paper? Why would I adjust the number of generations? What is protocol generated initialisation? How would one adjust the initialisation.csv file and why would I want to?**
+
+
+
+
+
+## Code review
+
+The `EmoGen_tool` code is divided among the following C++ source files:
+
+ 1) `main.cpp`: contains the `main()` function, creates the user interfaces, handles the main interaction loop and face generations and OpenGL rendering.
+ 2) `data.hpp` and `data.cpp`: Defines the `data` class. This maintains the current and previous generation of faces, as well as defining various hard-coded parameters.
+ 3) `utility.hpp` and `utility.cpp`: Provides a number of core utility functions for face generation.
+ 4) `box_multiwidget.hpp` and `box_multiwidget.cpp`: Defines the GTKmm GUI widget which allows the user to select faces and iterate generations.
+ 5) `CorrectiveWeightsAnalytic.hpp` and `CorrectiveWeightsAnalytic.cpp`: Provides the Ceres solver cost function used for correcting teeth and lip collisions in the relevant utility function `utility::correct_lip_and_teeth_collisions()`
+ 6) `common/`: Directory containing various rendering utilities such as shader handling, shaders, texture handling, etc.
+ 
+### Overview of program flow
+ 
+**Can we get a basic system diagram** - just use something like <http://draw.io> and shove a `.png` in the imgs directory and reference it here as:
+ 
+![System diagram](imgs/emogent_system_diagram.png){ width=80% }\
+ 
+ 
+
+    

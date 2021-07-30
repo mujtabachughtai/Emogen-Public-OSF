@@ -1,0 +1,17 @@
+## Overview of the tool
+
+Given the face model used by the EmoGen tool, the purpose of the `ApplyBlendweights` tool is to render an image of the face for a specific configuration of blendshape parameters.
+
+## Basic tool use
+
+The tool is used by running the launcher script
+
+```
+   bash run_visualisation.sh
+```
+
+As for `EmoGen_tool` this script serves as both a configuration file and a launcher. Editing the script allows for changing the source of the blendshape weights (parameters) (i.e. which file to load the parameters from), where to write the output, and whether to write an `.obj` mesh file as well as the images.
+
+## Code review
+
+The code is mostly contained within the `main.cpp` file, but includes some tools from the `EmoGen_tool/common` directory. It is a fairly simple case of parsing the command line arguments, loading the model data, initialising a GLFW rendering window, doing the OpenGL rendering of the posed face, and capturing that render to output to disk.
