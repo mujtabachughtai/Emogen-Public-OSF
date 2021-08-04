@@ -16,39 +16,62 @@ The tool must be started using the provided script (or a variation of it):
 
 This script serves as a configuration file and launcher - it specifies various configuration parameters and launches the actual `EmoGen_tool/build/run_tool` binary with a long list of command line arguments corresponding to those configuration parameters.
 
-Once the tool starts it creates two GUI windows. The larger window is created using GLFW and is an OpenGL context. This window displays an population of rendered faces, each one using a different set of parameters. The second window is a typical GUI window created using GTKmm (the C++ interface to GTK+).
+Once the tool starts it creates two GUI windows. The larger window is created using GLFW and is an OpenGL context. This window displays a population of rendered faces, each one using a different set of parameters. The second window is a typical GUI window created using GTKmm (the C++ interface to GTK+).
 
 Use of the tool follows the pattern:
 
   1) The user looks at and analyses the faces presented in the GLFW window
   2) The user uses the GTKmm GUI window to specify:
      1) which faces show the target emotion (in the user's opinion)
-     2) the face(s) that *best* show that emotion
+     2) the face that *best* shows that emotion (elite face)
      3) any faces which have an unrealistic appearance (termed "Monsters")
   3) The user finalises their selection by pressing the "Next generation" button.
   4) The tool uses the information from the user to update the faces, then presents a new generation of faces.
   5) The user repeats the process of selecting faces/monsters until they close the tool or reach the maximum number of generations.
 
-Buttons are also provided for the user to quit or to reset the session. Resetting the session does **what? (this seems to be configurable too?)**  
-
-
-More specific details on the use cases of the tool are provided in the publications **Is this true?**
-
-
-
+Buttons are also provided for the user to quit or to reset the session. What resetting the session does is configurable and depends on the type of initialisation of the genetic algorithm used (see below under Detailed configuration information)
 
 ## Detailed configuration information
 
-The launcher/configuration script provides options for configuring how the tool runs. These include basic options such as selecting a male or female model, as well as more specific options regarding the appearance of the faces, the rendering window, and experimental protocols.
+The launcher/configuration script provides options for configuring how the tool runs. These include basic options such as selecting a male or female model, as well as more specific options regarding the enabled/disabled aspects of facial dynamics, the rendering window, and experimental protocols.
 
-**Question: Are these things explained enough in the paper? Why would I adjust the number of generations? What is protocol generated initialisation? How would one adjust the initialisation.csv file and why would I want to?**
+Let us explain the configurable paremeters:
+
+  1) **Termination criterion of the genetic algorithm**: maximum_number_of_generations. This is often a trade-off between convergence and user fatigue.  
+	Generation-to-generation convergence improvement slows down gradually (supported by convergence simulations, also presented in the cited EmoGen publication,
+	and by analysis of human participant data which is to appear in future psychology publications). 
+	Default setting of maximum_number_of_generations=10 is a good choice. 
+
+  2) **Initialisation of the genetic algorithm**:
+     1) **Option 1**: protocol_generated_initialisation = true. The said protocol is hard-coded i.e. it cannot be changed by the user. Specifically, 
+        the protocol is to generate two random samples of each emotion type (i.e. happy, sad, angry and fearful), the neutral expression 
+        and a random arbitrary expression as the initial set of 10 faces.
+     2) **Option 2**: protocol_generated_initialisation = false. In this case, the initialisation will be read from file (initialisation.csv). Currently, there are 
+	four initialisation sets provided in the file. You can pick randomly from file (random_pick_from_file=true) OR select the initialisation number 
+	(e.g. random_pick_from_file=false and init_nr=3). If random_pick_from_file=true, any init_nr setting will have no effect.
+        If you want to alter initialisation.csv: weight sets corresponding to the initialisation sets are arranged in blocks of 150x10 (blendshapes x samples)
+	arranged horizontally in the csv file. So init_nr = 1 corresponds to columns 1 to 10; init_nr = 2 to columns 11 to 20 and so on. 
+	To add your initialisation block extend the file horizontally by the next 150x10 set and figure out its init_nr (last column number divided by 10).
+  3) **Genetic algorithm reset ** is configured differently for different intialisation options.
+     1) **Option 1**: protocol_generated_initialisation = true. For this option, after the user presses reset, you can either have the tool generate
+        a new initialisation set by the same protocol (reinit_after_reset=true) OR bring back the initialisation of the current session (reinit_after_reset=false).
+	Note that parameter reinit_after_reset has no effect if protocol_generated_initialisation = false.
+     2) **Option 2**: protocol_generated_initialisation = false. For initialisation read **and** randomly picked from file (random_pick_from_file=true), 
+	the initialisation set after reset will also be randomly picked from file. 
+	If a specific initialisation was read from file (e.g. random_pick_from_file=false and init_nr=3), that very same initilisation set will be brought 
+	back after reset.
+  4) **Facial dynamics limitations**: you can enable/disable motion of the eye pupils (eye_pupil_motion) and eye lids (eye_lid_motion). The ability to limit this
+	is needed because some experiments in psychology require to keep eye gaze as a constant.
+  5) **Number of selections**:  minimum_number_of_selections and maximum_number_of_selections. This is another experimental constraint for our psychology partners. 	
+	To enforce a fixed number of selections by all participants choose the same value for both minimum and maximum. 
+	For unconstrained selection, choose minimum_number_of_selections=1 and maximum_number_of_selections=10.
+  6) **OpenGL window**: specify screen_width and screen_height of your display. The OpenGL window with the ten faces will be half the screen width and two thirds 		of the screen height.
+
+Within the scope of outlined tool functionality and the set of configurable options, our psychology partners are free to define experiments (i.e. tool use cases). These will be explained in their publications. 
+
+Please note that reporting of unrealistic faces (a.k.a. monsters) is not related to psychology experiments at all. This is auxiliary data collection for any potential learning-based tool improvements in the future. 
 
 
-
-
-
-
- 
 ### Overview of program flow
  
  

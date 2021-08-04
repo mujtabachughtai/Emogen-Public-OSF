@@ -20,8 +20,8 @@ st = meStory.Story()
 st.style = "story2.css"
 
 st.title    = "EmoGen"
-st.author   = "Nadia, Murray"
-st.date     = [2021,7,29]
+st.author   = "Nadejda, Murray"
+st.date     = [2021,8,4]
 st.coverImg = "imgs/tst.jpg"
 #st.outputTypes = ["html", "word", "epub"]
 st.outputTypes = ["html"]

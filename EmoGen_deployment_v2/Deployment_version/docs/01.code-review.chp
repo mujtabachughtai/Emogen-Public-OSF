@@ -1,6 +1,6 @@
 ## Code review
 
-### overview
+### Overview
 
 The `EmoGen_tool` code is divided among the following C++ source files:
 
@@ -9,13 +9,16 @@ The `EmoGen_tool` code is divided among the following C++ source files:
  3) `utility.hpp` and `utility.cpp`: Provides a number of core utility functions for face generation.
  4) `box_multiwidget.hpp` and `box_multiwidget.cpp`: Defines the GTKmm GUI widget which allows the user to select faces and iterate generations.
  5) `CorrectiveWeightsAnalytic.hpp` and `CorrectiveWeightsAnalytic.cpp`: Provides the Ceres solver cost function used for correcting teeth and lip collisions in the relevant utility function `utility::correct_lip_and_teeth_collisions()`
- 6) `common/`: Directory containing various rendering utilities such as shader handling, shaders, texture handling, etc.
+ 6) `common/`: Directory containing various rendering utilities such as shader handling, shaders, texture handling etc.
 
 ### Details
 
 Please note:
- 1) Throughout this document, I refer to the EmoGen report on [ArXiv](https://arxiv.org/abs/2107.00480) I *strongly recommend* reading at least the paper sections I indicate below as they contain algorithm formalisations and diagram-supported explanations to understand the implementations in this code.
+
+ 1) Throughout this document, I refer to the EmoGen report on [ArXiv](https://arxiv.org/abs/2107.00480). I *strongly recommend* reading at least the paper sections I indicate below as they contain algorithm formalisations and diagram-supported explanations to understand the implementations in this code.
+
  2) To avoid unneccassarily cluttering the actual source code of the tool by comments, I have chosen to include commented source code blocks in this document, as part of the walkthrough, instead of commenting the source itself.
+
  3) The comments in the source code blocks relevant to this walkthrough are marked "NSR" and are in all CAPS.
 
 Let us begin..
@@ -24,6 +27,7 @@ The tool runs the user interface and the OpenGL rendering updated via the user-g
 
 User interface: the widget itself with all its fields and buttons is defined in `box_multiwidget.cpp`; 
 Function `threadFunction()` in `main.cpp` living on a separate thread from the rest governs the running of the widget. 
+
 Below in the `main.cpp` at comment `"THREAD OF THE USER INTERFACE"`, the `threadFunction()` gets set running on its thread.
 
 
@@ -58,12 +62,15 @@ void threadFunction()
 }
 ```
 
-The config. file from which the tool is run allows the user to set many different things indicated below.The options are documented in detail in the config. file itself.
-The beginning of the main file pulls the different user settings (e.g. monitor dimensions, minimum and maximum number of face selections, type of initialisation etc) from the config.file 
-(see "NSR" comments below for specifics)
-Also are read the developer determined parameters such as the default rendering position ("NSR: READ FROM FILE THE DEFAULT RENDERING POSITION OF THE FACES")
+The config. file from which the tool is run allows the user to set many different things indicated below. The options are documented in detail above (**Detailed configuration information**) and in the config. file itself.
+
+The beginning of the main file pulls the different user settings (e.g. monitor dimensions, minimum and maximum number of face selections, type of initialisation etc) from the config.file (see "NSR" comments below for specifics)
+
+Also are read the developer determined parameters such as the default rendering position ("NSR: READ FROM FILE THE DEFAULT RENDERING POSITION OF THE FACES").
+
 Then we also initialise the key data holding structures (e.g. active faces) and class instantiations.
-Also we parse session initialisation from the config file to determine what to display on the interface (e.g. which target emotion, instructions as to the number of selections)
+
+Also we parse session initialisation from the config file to customise the interface for the experiment (instructions for the user as to the target emotion and the allowed number of selections)
 
 ```cpp
 int main(int argc, char** argv) {
@@ -100,7 +107,7 @@ int main(int argc, char** argv) {
 		}
 
 		// blendshape choice restrictions
-		// NSR: FROM CONFIG PULL USER SETTINGS FOR INCLUSION/EXCLUSION OF EYE LID MOTION, EYE PUPIL MOTION AND HEAD MOTION (HEAD MOTION IS ALWAYS EXCLUDED, NOT A USER CHOICE ATM, LEFT HERE FUTURE DEVELOPMENT)
+		// NSR: FROM CONFIG PULL USER SETTINGS FOR INCLUSION/EXCLUSION OF EYE LID MOTION, EYE PUPIL MOTION AND HEAD MOTION (HEAD MOTION IS ALWAYS EXCLUDED, NOT A USER CHOICE ATM, LEFT HERE FOR FUTURE DEVELOPMENT)
 		std::stringstream ss_head_motion_choice(argv[17]); 
 		ss_head_motion_choice >> std::boolalpha >>  include_head_motion;
 
@@ -157,8 +164,8 @@ int main(int argc, char** argv) {
 		}
 ```
 
-class data holds a number of important hard-coded definitions in data.hpp (e.g. IDs of certain blendshape groups, collision zone definitions).
-The class maintains structures of current and previous face sample populations and governs GA (re-)initialisation 
+**class data** holds a number of important hard-coded definitions in data.hpp (e.g. IDs of certain blendshape groups, collision zone definitions).
+The class maintains structures of current and previous face sample populations and governs GA (re-)initialisation. 
 
 ```cpp
 
@@ -195,13 +202,13 @@ The class maintains structures of current and previous face sample populations a
 Now, towards future collision detection and correction: 
 first of all, we need to read from file the barycentric definitions of a set of anchor points from the collision zones.
 
-Function 1: load_blendshapes_speedy()
-Also, we load the blendshape model from a binary file as a set of binary offsets. SEE Function 1: load_blendshapes_speedy() with comments below
-Apart from loading the blendshape offsets, the function computes important anchor point maximum offsets on the collision correctives of the model to be able to compute collision correction.
+**Function 1:** `load_blendshapes_speedy()`.
+Also, we load the blendshape model from a binary file as a set of binary offsets. SEE **Function 1:** `load_blendshapes_speedy()` with comments below.
+Apart from loading the blendshape offsets, the function computes important anchor point maximum offsets on the collision correctives of the model so that we can compute collision correction later.
 Also the function creates a map of left/right shape pairs to be able to enforce symmetry later.
 In short, offsets are loaded in the specified order, the loaded model is semantically parsed (from the naming conventions in the blendshape_order file) and additional relevant offsets are commptued.
 
-Then we decide which are the blendshapes (sample_list) actually sampled within the GA framework taking user choices (inclusion/exclusion of blnd.shape groups) into account and excluding correctives
+Then we decide which are the blendshapes (sample_list) actually sampled within the GA framework taking user choices (inclusion/exclusion of blendshape groups) into account and excluding correctives.
 	
 ```cpp
 
@@ -235,8 +242,7 @@ Then we decide which are the blendshapes (sample_list) actually sampled within t
 ```
 
 In the next section, we initialise output data streams (stats_dump and monster log)
-AND initialise the population for GA (through my_data self-initialisation, the implementation is in data.cpp, highlighted below)
-See Function 5: class data, `initialise()`
+AND initialise the population for GA (through my_data self-initialisation, the implementation is in data.cpp, highlighted below. See **Function 5**: class data, `initialise()`
 
 ```cpp
 	stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::trunc);
@@ -264,9 +270,9 @@ See Function 5: class data, `initialise()`
 	
 ```
 
-Define structures holding attributes that openGL needs to render meshes: vertices, faces, normals, uvs
-SEE Function 2: load_initialisation() below with comments
-The function takes the blendshape weights generated by my_data ->initialise() and stored in my_data -> initialisation  and converts them into mesh attributes (futher infor below)
+Define structures holding attributes that openGL needs to render meshes: vertices, faces, normals, uvs.
+SEE **Function 2**: `load_initialisation()` below with comments.
+The function takes the blendshape weights generated by `my_data ->initialise()` and stored in `my_data -> initialisation`  and converts them into mesh attributes (further info below).
 
 ```cpp
 	// NSR: OPENGL RENDERING, INITIALISATION AND STRUCTURES
@@ -285,7 +291,7 @@ The function takes the blendshape weights generated by my_data ->initialise() an
 	
 ```
 
-The next bit is just a bunch of openGl definitions to enable desired rendering... also texture loading
+The next bit is just a bunch of openGL definitions to enable desired rendering... also texture loading
 
 ```cpp
 		// 3. visualise 10 faces + run GUI for clicking
@@ -374,27 +380,28 @@ The next bit is just a bunch of openGl definitions to enable desired rendering..
 
 ```
 
-Important: this is where the thread for the user interface gets initialised:
+**Important**: this is where the thread for the user interface gets initialised:
 
 ```cpp
 		//NSR: THREAD OF THE USER INTERFACE
 		std::thread fun_1(threadFunction);    
 ```
 
-Ok, we have come to main rendering loop. Triggered by user selections, the display gets periodically updated. In the meantime, it renders status quo on repeat
+Ok, we have come to main rendering loop. Triggered by user selections, the display gets periodically updated. In the meantime, it renders status quo on repeat.
 
-SEE Function 3: generateNextGen() below with comments. That computes the weights for the population update using user selections
-SEE Function 4: update_faces() below with comments. That converts the updated weights into openGL attributes to update the rendering
+SEE **Function 3**: `generateNextGen()` below with comments. This function computes the weights for the population update using user selections.
 
-The switch with exit codes governs the session flow scenario. The exit codes are set primarily from user input such as pressing "NEXT GENERATION" or "CLOSE TOOL"
-exit code can also be set on exceeding the maximum number of generations.
-Please see box_multiwidget.cpp
-The switch statement takes care of proper handling of both threads in the case of population update, closing of the tool and re-initialisation
-See comments in code below for futher details
+SEE **Function 4**: `update_faces()` below with comments. This function adds correctives and converts the updated weights into openGL attributes to update the rendering.
+
+The switch with exit codes governs the session flow scenario. The exit codes are set primarily from user input such as pressing "NEXT GENERATION" or "CLOSE TOOL" (please see box_multiwidget.cpp);
+exit code can also be set on exceeding the maximum number of generations in the main itself.
+
+The switch statement takes care of proper handling of both threads in the case of population update, closing of the tool and re-initialisation.
+See in-code comments below for futher details.
 
 ```cpp
 	std::string session_output_filename;
-	// NSR: MAIN RENDERING LOOP (THE USER INTERFACE IS RUNNING A SEPARATE THREAD), GA POPULATION UPDATES INSIDE
+	// NSR: MAIN RENDERING LOOP (THE USER INTERFACE IS RUNNING ON A SEPARATE THREAD), GA POPULATION UPDATES INSIDE
 	do{
 			// NSR: GA POPULATION UPDATE WITHIN THE LOOP
 			if ( my_data->chosen_rows.size() != 0 ) { // NSR: WHEN TO UPDATE THE GA POPULATION 
@@ -802,14 +809,12 @@ See comments in code below for futher details
 
 #### FUNCTIONS DEFINED AND USED IN MAIN.CPP; 
 
-FUNCTIONS 1-4 HAVE BEEN REFERENCED IN THE MAIN WALKTHROUGH ABOVE
+**FUNCTIONS 1-4 HAVE BEEN REFERENCED IN THE MAIN WALKTHROUGH ABOVE**
 
+**Function 1**: `load_blendshapes_speedy(int expected_number)`
+The function has several roles. Apart from reading the blendshape offsets from the binary file, it computes offsets from the Neutral blendshapes for sets of pre-defined anchor topology points on the collision corrective shapes. These offsets will be instrumental in collision correction computation.
 
-Function 1: `load_blendshapes_speedy(int expected_number)`
-The function has several roles. Apart from reading the blendshape offsets from the binary file, it computes offsets from the Neutral blendshapes for sets of pre-defined anchor topology points 
-on the collision corrective shapes. These offsets will be instrumental in collision correction computation.
-*Strongly recommended*: PLEASE SEE EMOGEN REPORT ON ARXIV, pg. 5-7 (from section "collision corrective offset formalisation" to section "collision correction optimisation")
-
+**Strongly recommended**: PLEASE SEE EMOGEN REPORT ON ARXIV, pg. 5-7 (from section "collision corrective offset formalisation" to section "collision correction optimisation")
 
 ```cpp
 
@@ -843,7 +848,7 @@ bool load_blendshapes_speedy(int expected_number) {
 
 		} 
 			
-		// NSR: CONVERT TOPOLOGY DEFINITIONS (BARYCENTRICS) OF KEY POINTS FOR COLLISION HANDLING (LOADED FROM FILE) TO CARTESIAN (NEUTRAL BLENDSHAPE)
+		// NSR: CONVERT TOPOLOGY DEFINITIONS (BARYCENTRICS) OF KEY POINTS FOR COLLISION HANDLING (LOADED FROM FILE) TO CARTESIAN FOR THE NEUTRAL BLENDSHAPE.
 		// helper IS AN INSTANTIATION OF CLASS ULILITY WITH CLASS AND FUNCTION DEFINITIONS IN utility.cpp AND utility.hpp
 		cv::Mat collision_anchor_neutral = helper.get_anchor_point_cartersian_coordinates(mesh, my_data -> collision_anchor_coordinates, false);
 		cv::Mat collision_anchor_neutral_teeth = helper.get_anchor_point_cartersian_coordinates(mesh, my_data -> collision_anchor_coordinates_teeth, false);
@@ -942,7 +947,7 @@ bool load_blendshapes_speedy(int expected_number) {
 					if (it -> second == name) {is_collision_blndsh = true; collision_order_nr = it -> first; break;}
 
 			}
-			// NSR: COMPUTE ANCHOR OFFSETS FOR LIP COLLISION CORRECTIVES (IF THE BLENDSHAPE IS A LIP COLLISION SHAPE)
+			// NSR: COMPUTE CARTESIAN ANCHORS FOR LIP COLLISION CORRECTIVES (IF THE BLENDSHAPE IS A LIP COLLISION SHAPE)
 			if (is_collision_blndsh) {
 
 					 const aiScene * currentScene;
@@ -980,7 +985,7 @@ bool load_blendshapes_speedy(int expected_number) {
 			} else {
 
 					 // NSR: IF IT IS NOT A LIP COLLISION CORRECTIVE BLENDSHAPE, IT MAY STILL BE A TEETH COLLISION CORRECTIVE BLENDSHAPE
-					 // WE HAVE A SPECIAL INTEREST IN THOSE TOO, TO EXTRACT CARTESIAN COORDINATES CORRESPONDING TO THE IDENTIFIED KEY TOPOLOGY POINTS
+					 // WE HAVE A SPECIAL INTEREST IN THOSE TOO, TO EXTRACT CARTESIAN COORDINATES CORRESPONDING TO THE IDENTIFIED KEY TOPOLOGY POINTS (ANCHORS)
 					 // THE SAME APPROACH TO GET THE ORDER NUMBER IN STRUCTURES
 					 for (std::map<int, std::string>::iterator it = my_data -> teeth_anchor_pair_nr_to_collision_blnd.begin(); 
 														  it != my_data-> teeth_anchor_pair_nr_to_collision_blnd.end(); 
@@ -989,7 +994,7 @@ bool load_blendshapes_speedy(int expected_number) {
 
 					}
 					  
-					// NSR: COMPUTE ANCHOR OFFSETS FOR TEETH COLLISION CORRECTIVES (IF THE BLENDSHAPE IS A TEETH COLLISION SHAPE)
+					// NSR: COMPUTE CARTESIAN ANCHORS FOR TEETH COLLISION CORRECTIVES (IF THE BLENDSHAPE IS A TEETH COLLISION SHAPE)
 					if (is_collision_blndsh) {
 								const aiScene * currentScene;
 								currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices ); 
@@ -1078,8 +1083,8 @@ bool load_blendshapes_speedy(int expected_number) {
 		 }
 
 
-		// NSR: YOU NEED TO DEFINE MAXIMUM DEVIATIONS FROM THE NEUTRAL OF THE KEY TOPOLOGY POINTS ON THE COLLISION CORRECTIVE BLENDSHAPES (RECALL THAT WE LOADED THE DEFINTIONS OF THESE TOPOLOGY POINTS FROM FILES
-		// INTO collision_anchor_coordinates, collision_anchor_coordinates_teeth AND lower_lip_coordinates. THIS IS NEEDED FOR THE COLLISION CORRECTION MECHANISM
+		// NSR: YOU NEED TO DEFINE MAXIMUM DEVIATIONS FROM THE NEUTRAL OF THE KEY TOPOLOGY POINTS (ANCHOR OFFSETS) ON THE COLLISION CORRECTIVE BLENDSHAPES (RECALL THAT WE LOADED THE DEFINTIONS OF THESE TOPOLOGY POINTS FROM FILES
+		// INTO collision_anchor_coordinates, collision_anchor_coordinates_teeth AND lower_lip_coordinates AND EXTRACTED CORRESPONDING CARTESIAN COORDINATES ABOVE). THESE ANCHOR OFFSETS ARE NEEDED FOR THE COLLISION CORRECTION MECHANISM
 		// TO UNDERSTAND COLLISION CORRECTION: PLEASE SEE EMOGEN REPORT ON ARXIV, pg. 5-7 (from section "collision corrective offset formalisation" to section "collision correction optimisation")
 		// LIP COLLISIONS
 
@@ -1142,16 +1147,19 @@ bool load_blendshapes_speedy(int expected_number) {
 
 ```
 
-Function 2: load_initialisation()
-The function takes the blendshape weights generated by my_data ->initialise() and stored in my_data -> initialisation  and converts them into mesh attributes.
-Initialisation in the data class only generates the core geometry. This function also applies correctives to the core geometry prior to rendering.
-Obviously, my_data->weights_current_generation structure gets updated with the corrective weights
+**Function 2**: `load_initialisation()`
+
+The function takes the blendshape weights generated by `my_data ->initialise()` and stored in `my_data -> initialisation` and converts them into mesh attributes.
+Initialisation in the **data** class only generates the core geometry. Function `load_initialisation()` also applies correctives to the core geometry prior to rendering. 
+
+Obviously, `my_data->weights_current_generation` structure gets updated with the corrective weights
+
 Note the procedure is different if the initialisation is read from file in which case we do not compute correctives as these would have been manualy set.
  
 ```cpp
 
-// NSR: MORE LIKE VISUALISE THE INITIALISATION GENERATED IN data.cpp AFTER APPLYING CORRECTIVE PROTOCOLS
-// CORRECTIVE PROTOCOLS WILL ONLY BE APPLIED FOR PROTOCOL GENERATED INITIALISATION, FIXED INITIALISATION IS LOADED AS IS
+// NSR: MORE LIKE VISUALISE THE INITIALISATION GENERATED IN data.cpp AFTER APPLYING CORRECTIVE MECHANISMS
+// CORRECTIVE MECHANISMS WILL ONLY BE APPLIED FOR PROTOCOL GENERATED INITIALISATION, FIXED INITIALISATION IS LOADED AS IS
 void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs,  std::vector<glm::vec3> &normals) {
 
               
@@ -1229,7 +1237,7 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
 													 my_data->weights_current_generation[choice_nr][blnd_nr] = 0.0;
 												}
 									   }
-										// NSR: ONCE EVERYTHING IS APPLIED, DETECT ANY COLLISIONS AND CORRECT (DETECTION+CORRECTION MODE -> "false")
+										// NSR: ONCE EVERYTHING IS APPLIED, DETECT ANY COLLISIONS AND CORRECT (DETECTION+CORRECTION MODE SINCE "false")
 										helper.correct_lip_and_teeth_collisions(mesh, choice_nr, lips, teeth, false);
 									}
 									
@@ -1260,7 +1268,7 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
 					for(int i = 0; i < NumberOfBlendshapes; ++i) record.at<double>(i + 2, choice_nr) = my_data->weights_current_generation[choice_nr][i];
 
 					// NSR: POSITION THE TEN FACES ON SCREEN
-					// DEFINED VERTICES, NORMALS, UVS AND FACES FOR OPENGL
+					// DEFINE VERTICES, NORMALS, UVS AND FACES FOR OPENGL
 					for(unsigned int i=0; i<mesh->mNumVertices; i++) {
 					   
 					aiVector3D pos = mesh->mVertices[i];
@@ -1335,18 +1343,23 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
 
 ```
 
-Function 3: `generateNextGeneration ()` and Function 4: `update_faces()` are applied as a pair to update the GA population displayed 
+**Function 3**: `generateNextGeneration ()` and **Function 4**: `update_faces()` are applied as a pair to update the GA population displayed. 
 
 
-Function 4: `update_faces()`
-This function is applied after Function 3: generateNextGeneration () and at re-initialisation to convert newly generated weights into mesh attributes to update the openGL display.
-Correctives are also applied here if neccessary.
-The function is also run after re-initialisation, which introduces different scenarios in terms whether to apply correctives or not.
+**Function 4**: `update_faces()`
+This function is applied after **Function 3**: generateNextGeneration () and at re-initialisation to convert newly generated weights into mesh attributes to update the openGL display.
+
+Correctives are also applied here if neccessary. The function is also run after re-initialisation, which adds to different scenarios in terms whether to apply correctives or not.
+
 Some examples of the possible scenarios:
-Correctives should never be applied if initialisation is read from file
-Also correctives are not appleid if we do not re-init. after reset (one of the user options in the config. file)
-Faces that are copied exactly do not have correctives re-computed
-You do apply correctives at re-init if you have protocol initialisation with re-init. after re-set. 
+
+1) Correctives should **never** be applied if initialisation is read from file
+
+2) Also correctives are not applied with protocol generated initialisation **if** we do not re-init. after reset (one of the user options in the config. file)
+
+3) Faces that are copied exactly from the previous generation do not have correctives re-computed
+
+4) You **do** apply correctives at re-initialisation if you have protocol generation initialisation **with** re-init=true after re-set. 
 
 ```cpp
 
@@ -1558,13 +1571,15 @@ You do apply correctives at re-init if you have protocol initialisation with re-
 
 ```
 
-Function 3: `generateNextGeneration()` This is application of the genetic algorithm to refine the population / produce the population update based on prior user selections
-Please, please read the formal definitions of the key GA operators and the flow of the algorithm as pseudo-code in the EmoGen report on ArXiv.
-Specifically, the structure of GA implementation below but *at a glance in pseudo-code* is PG.8 ALGORITHM 1 EMOGEN: THE GENETIC ALGORITHM of the EmoGen report
-Formal definitions of the GA operators are on pgs. 7-8
+**Function 3**: `generateNextGeneration()` 
 
-Put simply: various GA operators (averaging, cross-breeding + mutation, population boosting) are applied and symmetry is enforced. Note that correctives are applied in update_faces(), that is 
-Function 4 above.
+This is application of the genetic algorithm to refine the population / produce the population update based on user selections.
+
+Please, please read the formal definitions of the key GA operators and the flow of the algorithm as pseudo-code in the EmoGen report on ArXiv.
+Specifically, the structure of GA implementation below but *at a glance in pseudo-code* is PG.8 **ALGORITHM 1 EMOGEN: THE GENETIC ALGORITHM** of the EmoGen report.
+Formal definitions of the GA operators are on pgs. 7-8.
+
+Put simply: various GA operators (averaging, cross-breeding + mutation, population boosting) are applied and symmetry is enforced. Note that correctives are applied in `update_faces()`, that is **Function 4** above.
 
 ```cpp
 
@@ -1880,11 +1895,12 @@ Function 4 above.
 
 ```
 
-GA operator implementing functions used in Function 3: `generateNextGen()`
+#### GA operator implementing functions used in **Function 3**: `generateNextGen()`
 
 ```cpp
 
 // NSR: FUNCTIONS USED BY THE POPULATION UPDATING MECHANISM
+// NOTE HOW THERE IS A THOROUGH RECORD OF HOW EACH BLENDSHAPE WEIGHT IS GENERATED THROUGH THESE STOCHASTIC PROCESSES IN STATS_DUMP OUTPUT FILE
     void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
 
               unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -1996,16 +2012,16 @@ GA operator implementing functions used in Function 3: `generateNextGen()`
 
 #### `data.cpp` / `data.hpp`
 
-These two files implement class data (instantiation my_data in main.cpp) which has the function to maintain population defining structures and house some hard-coded initialisation parameters 
-(IDs for groups of blendshapes, collision zones, collision corrective maps to their order ID number etc).
+These two files implement **class data** (instantiation **my_data** in `main.cpp`), which has the function to maintain population defining structures and house some hard-coded initialisation parameters (IDs for groups of blendshapes, collision zones, collision corrective maps to their order ID number etc).
+
 Let us highlight the (self-)initialisation function defined within this class. The function computes the initial population / starting point for the GA algorithm
 
-Function 5: `int data::initialise()`
+**Function 5:** `int data::initialise()`
 
 ```cpp
 
 // NSR: GA INITIALISATION, CALLS A UTILITY FUNCTION TO PROTOCOL GENERATE THE FIRST SET OF FACES, ALSO RE-INIT HANDLING ACCORDING TO USER SPECIFICATIONS IN THE CONFIG FILE
-// IF NOT PROTOCOL INITIALISED READ FROM FILE USING READ_CSV
+// IF GA IS NOT PROTOCOL INITIALISED, THE INITIAL SET OF FACES IS READ FROM FILE USING READ_CSV
 
 int data::initialise() {
 
@@ -2064,7 +2080,7 @@ int data::initialise() {
 
 					}
 
-					// NSR: IF HAS NEVER BEEN INITIALISED OR IF IT IS A RE-INITIALISATION WITH RESET (USER CONFIG OPTION)
+					// NSR: IF HAS NEVER BEEN INITIALISED OR IF IT IS A RE-INITIALISATION AFTER RESET (USER CONFIG OPTION)
 					// generate_initialisation() IS A FUNCTION IMPLEMENTED IN CLASS UTILITY (utility.cpp/utility.hpp)
 					// THE FUNCTION IMPLEMENTS PROTOCOL INITIALISATION
 					if (initialisation.rows == 0 || reinit_after_reset) {
@@ -2073,7 +2089,7 @@ int data::initialise() {
 						init_number = 1;
 					}
 
-			} else { // NSR: OR IF NOT PROTOCOL BUT FIXED INITIALISATION, READ FROM FILE; CHECK CORRECTNESS OF THE OFFERED INITIALISATION FILE
+			} else { // NSR: OR IF NOT PROTOCOL BUT FROM-FILE INITIALISATION, READ FROM FILE; CHECKS CORRECTNESS OF THE OFFERED INITIALISATION FILE
 
 						if (initialisation.rows == 0) {
 							cv::Mat initialisation_data_stream = helper.read_csv(INITIALISATION_FILE);
@@ -2202,25 +2218,32 @@ int data::initialise() {
 Within this class (instantiated with the name "helper" in e.g. `main.cpp` and `data.cpp`), a great number of useful functions are implemented.
 
 Let us first list the important ones you should look at for which no additional in-code comments seem necessary. These functions are used in `main.cpp` and `data.cpp`.
- 1) `generate_initialisation` - implements protocol initialisation
- 2) `compute_smooth_vertex_normals` - after the mesh geometry has been updated (i.e. all vetex positions are set), the function re-computes vertex normals 
- 3) `read_csv` - read the fixed initialisation file in the csv format. Code after application of the function checks whether the initialisation data read from file is in the required format.
- 4) `apply_any_set_of_blendshapes` - given IDs of a blendshape group the function applies weight currently on file in `my_data->weights_current_generation` to the mesh geometry under choice_nr
- 5) `apply_head_motion` - for legacy reasons there is also one that just applies the head motion blendshapes..
- 6) `apply_corrective` - applies combinational correctives (see EmoGen report on ArXiv pg.4 on the difference between combinational and collision correctives) to any mesh geometry under "choice_nr" 
-in the `weights_current_generation` / `weights_previous_generation` using the activation mask created by parsing the blendshape model names (i.e. using a specific naming convention)
-in load_blendshapes_speedy -> see the walkthrough the main.cpp and Function 1 above.
- 7) `get_anchor_point_cartersian_coordinates` - use a set of barycentrics defined on a fixed topology to get cartesian coordinates. rotate option is legacy (from the default neutral position to dafault rendering postion), no longer used (rotate=false)
- 8) `write_session_to_csv_file()` writes the csv file in the predefined format with the info on the population, selections and elite selection for the current generation. The data comes from my_data->full_account assembled in the switch statement of the `main.cpp` under each `case(exit_code)` option.
+
+ 1) `generate_initialisation`: implements protocol generated initialisation
+
+ 2) `compute_smooth_vertex_normals`:  after the mesh geometry has been updated (i.e. all vertex positions are set), the function re-computes vertex normals).
+
+ 3) `read_csv`: read the fixed initialisation .csv file. Code after application of the function checks whether the initialisation data read from file is in the required format.
+
+ 4) `apply_any_set_of_blendshapes`: given IDs of a blendshape group the function applies weight currently on file in `my_data->weights_current_generation` to the mesh geometry under choice_nr.
+
+ 5) `apply_head_motion`: for legacy reasons there is also one that just applies the head motion blendshapes..
+
+ 6) `apply_correctives`: applies combinational correctives (see EmoGen report on ArXiv pg.4 on the difference between combinational and collision correctives) to any mesh geometry under "choice_nr" in the `weights_current_generation` / `weights_previous_generation` using the activation mask created by parsing the blendshape model names (i.e. using a specific naming convention)in load_blendshapes_speedy (see the walkthrough the `main.cpp` and **Function 1** above).
+
+ 7) `get_anchor_point_cartersian_coordinates`: use a set of barycentrics defined on a fixed topology to get Cartesian coordinates. rotate option is legacy (from the default neutral position to default rendering postion), no longer used (rotate=false)
+
+ 8) `write_session_to_csv_file()`: writes the csv file in the predefined format with the info on the population, selections and elite selection for the current generation. The data comes from my_data->full_account assembled in the switch statement of the `main.cpp` under each `case(exit_code)` option.
 
 
-The following function of the utility class is more involved, so let's look at it and its supporting functions in more detail. It implements detection and correction of collisions of various sub-geometries 
-in the facial meshes (e.g. upper lip or the teeth interpenetrating the lower lip).
-*Strongly recommended*: please read the EmoGen report on ArXiv for the full formalised explanation of the collision detection and correction mechanism with diagrams on pg.4-7.
+The following function of the **utility class** is more involved, so let's look at it and its supporting functions in more detail. It implements detection and correction of collisions of various sub-geometries in the facial meshes (e.g. upper lip or the teeth interpenetrating the lower lip).
+
+**Strongly recommended**: please read the EmoGen report on ArXiv for the full formalised explanation of the collision detection and correction mechanism with diagrams on pg.4-7.
+
 As mentioned before the function can run both in the detection-only mode (as_checker=true) and in the detection+correction mode (as_checker=false)
 
 
-Function 6: `correct_lip_and_teeth_collisions()`
+**Function 6**: `correct_lip_and_teeth_collisions()`
 
 ```cpp
 
@@ -2341,9 +2364,9 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 
 					// ... NSR: HAVING EXTRACTED THE POINT WE CHECK WHETHER THE POINT IS INVOLVED IN A COLLISION. FIRST YOU LOOK AT THE VERTICAL DIRECTION (HENCE THE NAME numberOfintersections_z)
 					// THERE ARE TWO INTERSECTION SCENARIOS POSSIBLE (SEE PG. 5 OF THE EMOGEN REPORT) CAUSING THE POINT TO BE EITHER WITHIN THE OTHER GEOMETRY (LOWER LIP) OR HAVING PASSED THROUGH IT
-					// TO BE ABLE TO DETERMINE WHICH SCENARIO WE ARE DEALING WITH WE NEED TO DO SOME RAY TRACING IN A SPECIFIED DIRECTION. IF THE POINT IS "WITHIN" FOR EXAMPLE THE RAY WILL INTERSECT A MESH TWICE, ONCE 
+					// TO BE ABLE TO DETERMINE WHICH SCENARIO WE ARE DEALING WITH WE NEED TO DO SOME RAY TRACING IN A SPECIFIED DIRECTION. IF THE POINT IS "WITHIN" FOR EXAMPLE THE RAY WILL INTERSECT THE MESH TWICE, ONCE 
 					// IN THE POSITIVE ORIENTATION OF THE RAY AND ONCE IN THE NEGATIVE.
-					// PLEASE SEE  FUNCTION 7: test_all_triangles() TO UNDERSTAND THIS RAY TRACING BUSINESS BETTER 
+					// PLEASE SEE FUNCTION 7: test_all_triangles() TO UNDERSTAND THIS RAY TRACING BUSINESS BETTER 
 					// PLEASE SEE FUNCTION 7 TO UNDERSTAND VARIABLES  numberOfintersections, face_intersections and true_intersections BASED ON WHICH COLLISION DECISIONS ARE MADE.
 					std::vector<unsigned int> face_intersections_z, face_intersections_y;
 					cv::Mat true_intersection_z, true_intersection_y;
@@ -2351,7 +2374,7 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 					int numberOfintersections_z = test_all_triangles(ptt, mesh, direction, face_intersections_z, true_intersection_z);
 
 					// NSR: HERE WE ARE NOTING DOWN THE IDENTIFIERS OF THE INTERSECTION THAT WILL NEED TO BE UNDONE TO FIX THE COLLISION IN THE SPECIFIED DIRECTION FOR THE SPECIFIC ANCHOR POINT SAMPLED
-					// IT IS THE FURTHEREST NEGATIVE DIRECTION INTERSECTION
+					// IT IS THE FURTHEST NEGATIVE DIRECTION INTERSECTION
 					if (face_intersections_z.size() > 0) {
 
 						pair.y = face_intersections_z[0];
@@ -2427,12 +2450,13 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 ```
 
 Above I have explained the collision detection for the upper lip with the lower lip. The next segment is rather analogous
-only we look at the anchor points of the upper teeth as the interpenetrating structure again into the lower lip.
-Again it starts with computing the Cartesian coordinates correspondng to the barycentrics of the teeth anchors. Then we sample
-intersections in the vertical and in-out ray directions. From that we make the decision whether the point is intersecting and record the identifiers for the key
-intersection point to later compute the amount of intersection that will need to be "undone" to correct the mesh.
-There is some difference in the heuristic for identifying collisions of the teeth with the lower lip (indicated in-code below). This is mainly to try and avoid misclassifying the ambigious "over-bite" scenario,
-which is not a collision.
+only we look at the anchor points of the upper teeth as the interpenetrating structure into the lower lip.
+
+Again it starts with computing the Cartesian coordinates correspondng to the barycentrics of the teeth anchors. 
+Then we sample intersections in the vertical and in-out ray directions. 
+From that we make the decision whether the point is intersecting and record the identifiers for the key intersection point to later compute the amount of intersection that will need to be "undone" to correct the mesh.
+
+There is some difference in the heuristic for identifying teeth collisions with the lower lip (indicated in-code below). This is mainly to try and avoid misclassifying the ambigious "over-bite" scenario,which is not a collision.
 
 ```cpp
               
@@ -2551,13 +2575,13 @@ which is not a collision.
 		*/
          
 			std::cout << "true intersections: " << lips_count << " " << teeth_count << std::endl;
-			// NSR: IF RUNNING IN THE COLLISION DETECTION AND CORRECTION MODE AND THERE IS NOTHING TO CORRECT EXIT
+			// NSR: IF RUNNING IN THE COLLISION DETECTION AND CORRECTION MODE AND THERE IS NOTHING TO CORRECT, EXIT
 			if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
 
 			cv::Mat A_local;
 			// NSR: OTHERWISE ASSEMBLE THE MATRICES TO SOLVE Ax=b system
-			// SEE FORMAL DESCRIPTION OF THE PROBLEM AND SOLUTION IN THE EMOGEN REPORT ON ARXIV: "COLLISION CORRECTION OPTIMISATION" PG.6 (REALLY, THIS IS BEST WAY TO UNDERSTAND IT) 
-			// YOU MAY ALSO WANT TO LOOK AT "COLLISION CORRECTIVE OFFSET FORMALISATION" AND "COLLISION DEPTH QUANTIFICATION" ON PG.5 ON THE REPORT
+			// SEE FORMAL DESCRIPTION OF THE PROBLEM AND SOLUTION IN THE EMOGEN REPORT ON ARXIV: "COLLISION CORRECTION OPTIMISATION" PG.6 (REALLY, THIS IS THE BEST WAY TO UNDERSTAND IT) 
+			// YOU MAY ALSO WANT TO LOOK AT "COLLISION CORRECTIVE OFFSET FORMALISATION" AND "COLLISION DEPTH QUANTIFICATION" ON PG.5 OF THE REPORT
 			// BELOW I REFER TO SOME EQUATIONS IN THE REPORT
 			for (unsigned int anchor_nr_t = 0; anchor_nr_t < numOfcollision_ptrs; ++anchor_nr_t) {
 
@@ -2606,11 +2630,11 @@ which is not a collision.
 					for (unsigned int blnd_collision_nr = 0; blnd_collision_nr < 4; ++blnd_collision_nr) {
 
 					 if(collision_lips) {
-							// NSR: SEE EQUATION 3 IN THE EMOGEN REPORT: IT SHOWS THE CONSTRAINT, ELEMENT OF MATRIX A, PER BLNDSHAPE
-							// NOTE THAT THE DIFFERENCE IS FOR THE INTERSECTION PAIR: ANCHOR POINT BLND. OFFSET ON THE UPPER LIP MINUS BLND OFFSET OF ITS INTERSECTION PARTNER ON THE LOWER LIP
+							// NSR: SEE EQUATION 3 IN THE EMOGEN REPORT: IT SHOWS MAXIMUM ELIMINATED COLLISION FOR INTERSECTION PAIR PER BLENDSHAPE (FOR LEFT-HAND SIDE OF Ax=b)
 							// REMEMBER WE WERE SEARCHING FOR PAIRS OF ANCHORS TO DERTERMINE HOW MUCH IT NEEDS TO BE "UNDONE" TO ELIMINATE THE COLLISION?
-							// WELL, THIS IS THE MAXIMUM THAT CAN BE UNDONE PER UNIT BLEND WEIGHT.
+							// WELL, THIS IS THE MAXIMUM THAT CAN BE UNDONE USING THIS BLENDSHAPE PER UNIT BLEND WEIGHT.
 							// ONLY THE VERTICAL DIMENSION IS CONSIDERED
+// NOTE THAT BOTH POINTS IN THE PAIR HAVE VECTORIAL OFFSETS FROM THE NEUTRAL, HENCE THE (TOTAL) MAXIMUM ELIMINATED COLLISION IS: ANCHOR POINT BLND. OFFSET ON THE UPPER LIP MINUS BLND OFFSET OF ITS INTERSECTION PARTNER ON THE LOWER LIP
 							row.at<double>(blnd_collision_nr) = (my_data -> collision_deviations.at<double>(blnd_collision_nr * numOfcollision_ptrs  
 															  + anchor_nr_t, 1)
 										  - my_data -> collision_deviations_lwr_lip.at<double>(blnd_collision_nr * numberOflowerlip_ptrs 
@@ -2777,7 +2801,7 @@ which is not a collision.
 									cv::Mat row;
 									A_local.row(constr_nr).copyTo(row);
 									// NSR: NOTE ANALYTIC DERIVATIVES
-									// JACOBIANS ARE DEFINED IN CorrectiveWeightsAnalytic CLASS DEFINITION IN CorrectiveWeightsAnalytic.cpp/.hpp  CLASS DEFINITIONS
+									// JACOBIANS ARE DEFINED IN CorrectiveWeightsAnalytic CLASS DEFINITION IN CorrectiveWeightsAnalytic.cpp/.hpp  
 									// SEE FUNCTION 8: Evalutate() in CorrectiveWeightsAnalytic.cpp BELOW
 									ceres::CostFunction* cost_function = new CorrectiveWeightsAnalytic(row, b.at<double>(constr_nr), lip_constraint);
 									ceres::ResidualBlockId block_id = problem_collisions.AddResidualBlock(cost_function, NULL, collision_weights_ptr);  
@@ -2861,15 +2885,18 @@ which is not a collision.
 ```
 
 
-Function 7:  `utility::test_all_triangles()`
-This function performs ray tracking in the specified direction and counts the number of type of intersections based on which we can determine whether an intersection exists and what type.
-The test is performed per anchor point of the intersecting structure (upper lip or teeth) and checks intersections with any faces of the intersected structure (lower lip)
+**Function 7**:  `utility::test_all_triangles()`
+This function performs ray tracing from a topology's anchor point in the specified direction searching for intersections with the lower lip of the analysed mesh.
+
+Based on the number of intersections and their ray directions found we can determine whether a geometric interpenetration (or collision) exists and of what type.
+
+The test is performed per anchor point of the interpenetrating structure (upper lip or teeth) checking for intersections with any faces of the lower lip.
 
 ```cpp
 
-// NSR: ANALYSE WHETHER AN INTERSECTION EXISTS AND WHAT TYPE ("THROUGH" OR "WITHIN")
+// NSR: ANALYSE WHETHER A COLLISION EXISTS AND WHAT TYPE ("THROUGH" OR "WITHIN")
 // *STRONGLY RECOMMENDED*: READ THROUGH COLLISION DECTECTION SECTION IN EMOGEN ARXIV REPORT PG. 5
-// ptr IS THE TESTED POINT OF THE INTERSECTING STRUCTURE
+// ptr IS THE TESTED ANCHOR POINT OF THE (POTENTIALLY) INTERPENETRATING STRUCTURE
 int utility::test_all_triangles(cv::Mat &ptr, aiMesh* mesh, cv::Mat &direction, std::vector<unsigned int> &intersections, cv::Mat &true_intersection){
 
    int intersections_pos = 0;
@@ -2884,7 +2911,7 @@ int utility::test_all_triangles(cv::Mat &ptr, aiMesh* mesh, cv::Mat &direction, 
    
    for (unsigned int face_nr = 0; face_nr < nrOffaces; ++face_nr){
    
-			// NSR: GET THE FACE OF THE INTERSECTED STRUCTURE AND COMPUTE ITS GEOMETRIC NORMAL
+			// NSR: GET THE FACE OF THE INTERSECTED STRUCTURE (LOWER LIP) AND COMPUTE ITS GEOMETRIC NORMAL
 			
 			int face_id = (int) my_data -> lower_lip_coordinates.at<double>(face_nr, 0);
 			aiFace& face = mesh->mFaces[face_id]; 
@@ -2918,7 +2945,7 @@ int utility::test_all_triangles(cv::Mat &ptr, aiMesh* mesh, cv::Mat &direction, 
 			double u,v,w;
 			// NSR: CONVERT THE INTERSECTION POINT INTO BARYCENTRICS OF THE FACE THAT WE ARE CHECKING DEFINED BY ITS 3 VERTICES
 			// THE BARYCENTRICS WILL TELL YOU WHETHER THE INTERSECTION POINT LIES WITHIN THE ACTUAL CONFINES OF THE FACE (OR ELSEWHERE ON THE PLANE DEFINED BY THE FACE NORMAL)
-			// AND HENCE WHETHER THE RAY INTERSECTS IT OR NOT. BARYCENTRICS IS A SEPARATE FUNCTION FOUND IN utility.cpp
+			// AND HENCE WHETHER THE RAY INTERSECTS IT OR NOT. Barycentric IS A SEPARATE FUNCTION FOUND IN utility.cpp
 			Barycentric(intersection_ptr, face_vrtx_1,face_vrtx_2, face_vrtx_3, u,v,w);
 			
 			// NSR: HERE IS THE TEST USING THE BARYCENTRICS FOR WHETHER THE INTERSECTION POINT IS WITHIN OR NOT
@@ -2973,8 +3000,10 @@ int utility::test_all_triangles(cv::Mat &ptr, aiMesh* mesh, cv::Mat &direction, 
 
 ```
 
-Let us look at the entire class defining the ceres problem of collision corrective weight computation used in the function utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool &lip_collision, bool &teeth_collsion, bool as_checker) in utility.cpp
-See http://ceres-solver.org/ for further documentation on problem formulation with different types of derrivatives for cost function optimisation
+Let us look at the class defining the ceres problem of collision corrective weight computation used in the function `utility::correct_lip_and_teeth_collisions()` in `utility.cpp`.
+
+See http://ceres-solver.org/ for further documentation on problem formulation with different approaches to derivatives in cost function optimisation.
+
 We use analytically computed derivatives for the variables in Equation 5 of the EmoGen report.
 
 ```cpp
@@ -3064,376 +3093,9 @@ class CorrectiveWeightsAnalytic: public ceres::SizedCostFunction < 2, 8 > {
 
 ```
 
-This concludes the walkthrough of the source code of the EmoGen tool itself. Well done for making it this far!
-Let us now *briefly* look at the visualiser of the blendshape weight vectors.
-The way to run the code, including the specifics of the input file format (! very important), is detailed in the readme.txt in the ApplyBlendweights/ folder and in the configuration file (run_visualisation.sh)
-In short, the code takes one or more blendshape vectors and renders the corresponding images. Optionally, the mesh (.obj) can also be produced for each vector (the option is disabled by default in the config. file to save space)
-Let us look at the code..
+**This concludes the walkthrough of the source code of the EmoGen tool **. 
 
-```cpp
-
-int main(int argc, char** argv) {
-
-	DATA_DIRECTORY = argv[1];
-	
-	NumberOfBlendshapes = atoi(argv[2]);
-	
-	weights_FILE = argv[3];
-	std::string weights(weights_FILE);
-	std::ifstream infi_weights;
-	char comma;
-	std::string line;
-	
-	output_PATH = argv[4];
-	
-	const char * TEXTURE_FILE = argv[5];
-	std::string texture_file_as_string(TEXTURE_FILE);
-	std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
-	if (format != "png" && format!= "bmp") {
-		std::cout << "Unknown texture format. Only .png and .bmp can be read " << std::endl;
-		return 1;
-	}
-	
-
-	SHADER_DIRECTORY = argv[6];
-	
-	int total = atoi(argv[7]);
-	
-	std::stringstream ss_init_choice(argv[8]); 
-	bool obj_file;
-	ss_init_choice >> std::boolalpha >>  obj_file;
-	
-	// NSR: THIS IS THE RENDERING POSITION FILE 
-	cv::Mat info(4, 3, CV_64F);
-	info.setTo(0.0);
-	std::string info_filename = DATA_DIRECTORY + "data2.dat";
-	std::ifstream rf (info_filename, std::ios::in | std::ios::binary);
-	if(!rf) {
-	  std::cout<< "ERROR: Important data (data2.dat) file is missing. Contact the developer!" << std::endl;
-	  return 1;
-	}
-	rf.read(reinterpret_cast<char*> (info.data), 12 * sizeof(double));
-	cv::Mat part1, part2;
-	info.rowRange(0,3).copyTo(part1);  // NSR: ROTATION
-	info.rowRange(3,4).copyTo(part2);  // NSR: TRANSLATION
-	rf.close();
-	
-	// check rendering 
-	Neutral_FILE = DATA_DIRECTORY + "neutral.obj";
-
-	Assimp::Importer importer;
-	const aiScene * currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices ); 
-	if (currentScene == NULL) {
-			std::cout << "ERROR: model neutral could not be read" << std::endl;
-			return 1;
-	}
-	aiMesh* mesh = currentScene->mMeshes[0];
-	// NSR: NEUTRAL IS LOADED TO GET THE NUMBER OF VERTICES
-	int numberOfvrtx = mesh->mNumVertices; 
-	std::cout << "number of vertices: " << numberOfvrtx << std::endl;
-	
-	// NSR: GET BLENDSHAPE OFFSETS, ALREADY IN THE RENDERING POSITION (!)
-	cv::Mat init(NumberOfBlendshapes * numberOfvrtx * 3, 1, CV_64F);
-	init.setTo(0.0);
-	init.copyTo(allBlendShapeVertices3Nx1);
-	std::string info_filename2 = DATA_DIRECTORY + "data.dat";
-	std::cout << info_filename2 << std::endl;
-	std::ifstream rf2 (info_filename2, std::ios::in | std::ios::binary);
-	if(!rf2) {
-		std::cout<< "ERROR: Important data file (data1.dat) is missing. Contact the developer!" << std::endl;
-		return 1;
-	}
-	rf2.read(reinterpret_cast<char*> (allBlendShapeVertices3Nx1.data), NumberOfBlendshapes * numberOfvrtx * 3 * sizeof(double));
-	rf2.close();
-	std::cout << "blendshapes loaded" << std::endl;
-	
-	glewExperimental = true;
-	if( !glfwInit() ) {
-		std::cout << "Failed to initialize GLFW" << std::endl;
-		return -1;
-	}
-
-	glfwWindowHint(GLFW_SAMPLES, 4); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); 
-	glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-
-	window = glfwCreateWindow(window_width, window_height, "Input Face", NULL, NULL);
-
-	if( window == NULL ) {
-		std::cout << "ERROR: OpenGL window has not initialised" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);          
-	if (glewInit() != GLEW_OK) {
-		std::cout <<"Failed to initialize GLEW" << std::endl;
-		return -1;
-	}
-	
-	unsigned char* image;
-	int tex_width, tex_height;
-	if (format == "png") image = SOIL_load_image(TEXTURE_FILE, &tex_width, &tex_height, 0, SOIL_LOAD_RGB);
-	
-	Assimp::Exporter exporter;
-	// NSR: GET THE BLENDSHAPE WEIGTHS
-	infi_weights.open(weights);
-	for (unsigned int sample_nr = 0; sample_nr < total; ++sample_nr) {
-		std::cout << "rendering sample nr. " << sample_nr << std::endl;
-		cv::Mat_<double>  weights = cv::Mat(1, NumberOfBlendshapes, CV_64F, double(0.0));
-
-		for(int i = 0; i < NumberOfBlendshapes; ++i) { 
-			infi_weights >> weights(i); 
-			infi_weights >> comma;
-			std::cout << weights(i) << " ";
-		}
-		std::cout<< std::endl;
-		// NSR: READ THE NEUTRAL AND TRANSFORM TO THE RENDERING POSITION TO MATCH THE BLENDSHAPE OFFSETS
-		currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices ); 
-		if (currentScene == NULL) {
-			std::cout << "ERROR: model neutral could not be read" << std::endl;
-			return 1;
-		}
-		mesh = currentScene->mMeshes[0];
-		
-		for (unsigned int k=0; k < numberOfvrtx; ++k){
-			
-			cv::Mat ptt(1,3, CV_64F);
-			ptt.at<double>(0) =  (double) mesh->mVertices[k].x;
-			ptt.at<double>(1) =  (double) mesh->mVertices[k].y;
-			ptt.at<double>(2) =  (double) mesh->mVertices[k].z;
-			
-			ptt = ptt  * part1 + part2;
-			
-			mesh->mVertices[k].x = (float) ptt.at<double>(0);
-			mesh->mVertices[k].y = (float) ptt.at<double>(1);
-			mesh->mVertices[k].z = (float) ptt.at<double>(2);
-			
-		} 
-		//NSR: APPLY THE BLENDSHAPE WEIGHTS
-		for(int i = 0; i < NumberOfBlendshapes; ++i) {
-			for (unsigned int vrtx_nr = 0; vrtx_nr < numberOfvrtx; ++vrtx_nr){
-				mesh->mVertices[vrtx_nr].x +=  weights(i) * allBlendShapeVertices3Nx1(i * 3 * numberOfvrtx + 3 * vrtx_nr);
-				mesh->mVertices[vrtx_nr].y +=  weights(i) * allBlendShapeVertices3Nx1(i * 3 * numberOfvrtx + 3 * vrtx_nr + 1);
-				mesh->mVertices[vrtx_nr].z +=  weights(i) * allBlendShapeVertices3Nx1(i * 3 * numberOfvrtx + 3 * vrtx_nr + 2);
-			}
-		} 
-		// NSR: ALWAYS NEED TO RECOMPUTE THE NORMALS AFTER REDEFINING THE VERTEX POSITIONS AS ABOVE
-		compute_smooth_vertex_normals(mesh);
-		// NSR: IN THE NEXT BLOCK OF OPENGL GOODNESS -> RENDER
-		glClearColor(0.0f,0.0f, 0.0f, 1.0f);
-
-		std::vector<unsigned int> indices;          
-		std::vector<glm::vec3> vertices;
-		std::vector<glm::vec2> uvs;
-		std::vector<glm::vec3> normals; 
-		
-		for(unsigned int i=0; i<mesh->mNumVertices; ++i) {
-		
-			aiVector3D pos = mesh->mVertices[i]; 
-			vertices.push_back(glm::vec3(pos.x, pos.y, pos.z));
-
-			aiVector3D UVW = mesh->mTextureCoords[0][i]; 
-			uvs.push_back(glm::vec2(UVW.x, UVW.y));
-
-			aiVector3D n = mesh->mNormals[i];
-			normals.push_back(glm::vec3(n.x, n.y, n.z));
-
-		}
-		for (unsigned int i=0; i<mesh->mNumFaces; i++){
-			
-			indices.push_back(mesh->mFaces[i].mIndices[0]);
-			indices.push_back(mesh->mFaces[i].mIndices[1]);
-			indices.push_back(mesh->mFaces[i].mIndices[2]);
-			
-		} 
-		
-		GLuint VertexArrayID;
-		glGenVertexArrays(1, &VertexArrayID);
-		glBindVertexArray(VertexArrayID);
-		
-        GLuint Texture;
-        if (format == "bmp") Texture = loadBMP_custom(TEXTURE_FILE);
-		
-		GLuint programID = LoadShaders( (SHADER_DIRECTORY + "StandardShading.vertexshader").c_str(),  (SHADER_DIRECTORY+"StandardShading.fragmentshader").c_str());
-		GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
-
-		// Get a handle for our "MVP" uniform
-		GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-		GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-		GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-		GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
-		GLuint vertexbuffer;
-		glGenBuffers(1, &vertexbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_DYNAMIC_DRAW);
-
-		GLuint uvbuffer;
-		glGenBuffers(1, &uvbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_DYNAMIC_DRAW);
-
-		GLuint normalbuffer;
-		glGenBuffers(1, &normalbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_DYNAMIC_DRAW);
-
-		GLuint elementbuffer;
-		glGenBuffers(1, &elementbuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
-
-		glEnable(GL_DEPTH_TEST); // Enable depth test
-		glDepthFunc(GL_LESS);    // Accept fragment if it is closer to the camera than the former one
-
-		char mesh_FILE_ext[100]; 
-		sprintf(mesh_FILE_ext, "sample_%d.obj", sample_nr);
-		std::string mesh_FILE = output_PATH + mesh_FILE_ext;
-		char image_FILE_ext[100]; 
-		sprintf(image_FILE_ext, "sample_%d.jpg", sample_nr);
-		image_FILE = output_PATH + image_FILE_ext;
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(programID);
-		glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar); 
-
-		glm::mat4 ViewMatrix = glm::lookAt(
-		glm::vec3(camera_position.x, camera_position.y, camera_position.z),   
-		glm::vec3(camera_position.x, camera_position.y, lookat_z),   
-		glm::vec3(0, 1 ,0) );
-		 
-		glm::mat4 ModelMatrix =  glm::mat4(1.0);
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture);
-		if (format == "png") {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		glUniform1i(TextureID, 0);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			   0,                  
-			   3,                  
-			   GL_FLOAT,           
-			   GL_FALSE,          
-			   0,                 
-			   (void*)0       );
-  
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glVertexAttribPointer(
-			1,                               
-			2,                               
-			GL_FLOAT,                         
-			GL_FALSE,                         
-			0,                                
-			(void*)0         );
-
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glVertexAttribPointer(
-				 2,                                
-				 3,                                
-				 GL_FLOAT,                        
-				 GL_FALSE,                         
-				 0,                               
-				 (void*)0     );
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
-		//NSR: DUMP OPENGL BUFFER TO IMAGE FILE
-		unsigned char pixels[cropped_image_height * cropped_image_width  * 4 ] = { 0 };
-		glReadPixels(crop_corner_width, crop_corner_height, cropped_image_width, cropped_image_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
-		write_buffer_to_file(pixels); 
-		  
-		glDeleteBuffers(1, &vertexbuffer);
-		glDeleteBuffers(1, &uvbuffer);
-		glDeleteBuffers(1, &normalbuffer);
-		glDeleteBuffers(1, &elementbuffer);
-		glDeleteProgram(programID);
-		glDeleteTextures(1, &Texture);
-		glDeleteVertexArrays(1, &VertexArrayID);
-		// NSR: ALSO WRITE THE 3D MESH TO FILE IF THE OPTION IS ENABLED BY THE USER IN THE CONFIG FILE
-		if (obj_file) exporter.Export(currentScene, "obj",  mesh_FILE);
-	}
-	glfwDestroyWindow(window);
-	if (format == "png") SOIL_free_image_data(image);
-	return 0;
-
-}
-
-```
-
-The tool supporting functions are:
-
-```cpp
-
-//NSR: AS IN THE EMOGEN TOOL CODE, UTILITY.CPP
-void compute_smooth_vertex_normals(aiMesh* mesh){
-
-	// zero out all normals
-	for (unsigned int vrtx_id = 0; vrtx_id < mesh->mNumVertices; ++vrtx_id) mesh->mNormals[vrtx_id] = aiVector3D(0.0f,0.0f,0.0f); 
-
-	for (unsigned int face_id = 0; face_id < mesh->mNumFaces; ++face_id){
-		
-			const aiFace& face = mesh->mFaces[face_id]; 
-			aiVector3D a = mesh->mVertices[face.mIndices[0]]; 
-			aiVector3D b = mesh->mVertices[face.mIndices[1]]; 
-			aiVector3D c = mesh->mVertices[face.mIndices[2]]; 
-
-			aiVector3D e1  = a - b;
-			aiVector3D e2  = c - b;
-			aiVector3D normal = -(e1 ^ e2); 
-
-			mesh->mNormals[face.mIndices[0]] += normal;
-			mesh->mNormals[face.mIndices[1]] += normal;
-			mesh->mNormals[face.mIndices[2]] += normal;
-			
-	}
-	for (unsigned int vrtx_id = 0; vrtx_id < mesh->mNumVertices; ++vrtx_id) mesh->mNormals[vrtx_id].Normalize();
-}
-
-// NSR: IMAGE RENDERING FROM OPENGL OUTPUT WITH ALL THE NECESSARY ACROBATICS FOR IMAGE RENDERING THE RIGHT WAY UP ETC.
-void write_buffer_to_file(unsigned char pixels[cropped_image_height * cropped_image_width * 4 ]){
-
-	cv::Mat image(cropped_image_height, cropped_image_width, CV_8UC3);
-	image.setTo(cv::Vec3b(0,0,0));
-	
-	int counter = 0;
-	for (int row_nr = 0; row_nr < cropped_image_height; ++row_nr) {
-		for (int col_nr = 0; col_nr < cropped_image_width ; ++col_nr) {
-
-			 int blue  = counter * 4 + 2;
-			 int green = counter * 4 + 1;
-			 int red   = counter * 4;
-			 
-			 image.at<cv::Vec3b>(cropped_image_height - (row_nr + 1), col_nr)[0] = static_cast< int >(  pixels[ blue ] );
-			 image.at<cv::Vec3b>(cropped_image_height - (row_nr + 1), col_nr)[1] = static_cast< int >(  pixels[ green ] );
-			 image.at<cv::Vec3b>(cropped_image_height - (row_nr + 1), col_nr)[2] = static_cast< int >(  pixels[ red ] );
-
-			 counter++;
-		}
-	}
-	imwrite(image_FILE, image);
-}
+Well done for making it this far!
 
 
 

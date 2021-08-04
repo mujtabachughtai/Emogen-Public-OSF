@@ -1,18 +1,19 @@
 
 ## Overview
 
-The EmoGen repository provides C++ software tools for the EmoGen project, full details of which can be found in the following publications:
+The EmoGen repository provides C++ software tools for the EmoGen project, full details of which can be found in the following publication:
 
-  1) [EmoGen: Quantifiable Emotion Generation and Analysis forExperimental Psychology]( https://arxiv.org/abs/2107.00480 )
+  1) [EmoGen: Quantifiable Emotion Generation and Analysis for Experimental Psychology]( https://arxiv.org/abs/2107.00480 )
 
 ## Tools
 
 The repository consists of two tools.
 
   1) EmoGen_tool: This is an interactive tool that allows a user to generate faces that portray a desired emotional state.
-  2) ApplyBlendweights: Given the parameters (weights) that define the pose/expression of a face, this renders and image of that face
+  2) ApplyBlendweights: Given the parameters (blendshape weights) that define the expression of a face, this renders an image of that face and optionally also 
+     outputs the corresponding 3D mesh.
 
-Both tools are typically run using the relevant bash script, where the script also serves as a configuration file.
+Both tools are run using the relevant bash script, where the script also serves as a configuration file.
   
 ## Installation
 
@@ -30,7 +31,7 @@ The following dependencies must be installed for correct compilation. A script i
   
 Note that there are specific versions of the Ceres solver and the assimp library provided as part of the repository. Equally, a specific version of OpenCV is also preferred (3.2.0).
 
-**Why are these specific versions preferred?**
+The provided / indicated versions of the libraries are the ones the tools have been developed and tested with. The tools may or may not work as intended with other versions - the behaviour is unknown with any other versions.
 
 ### Compilation
 
