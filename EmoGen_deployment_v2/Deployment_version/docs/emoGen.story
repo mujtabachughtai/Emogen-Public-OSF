@@ -22,7 +22,7 @@ st.style = "story2.css"
 st.title    = "EmoGen"
 st.author   = "Nadejda, Murray"
 st.date     = [2021,8,4]
-st.coverImg = "imgs/tst.jpg"
+st.coverImg = "imgs/male.jpg"
 #st.outputTypes = ["html", "word", "epub"]
 st.outputTypes = ["html"]
 
