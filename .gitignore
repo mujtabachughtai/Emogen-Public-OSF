@@ -1,0 +1,16 @@
+.DS_Store
+EmoGen_deployment_v2/.DS_Store
+EmoGen_deployment_v2/Deployment_version/.DS_Store
+EmoGen_deployment_v2/Deployment_version/EmoGen_tool/build/
+EmoGen_deployment_v2/Deployment_version/EmoGen_tool/build/
+EmoGen_deployment_v2/Deployment_version/ApplyBlendweights/build/CMakeFiles/go_3D.dir/home/
+EmoGen_deployment_v2/Deployment_version/deployment/assimp-3.3.1/
+EmoGen_deployment_v2/Deployment_version/deployment/ceres-bin/
+EmoGen_deployment_v2/Deployment_version/deployment/ceres-solver-1.12.0/
+EmoGen_deployment_v2/Deployment_version/data/
+EmoGen_deployment_v2/Deployment_version/user_output/
+EmoGen_deployment_v2/Deployment_version/ApplyBlendweights/build/
+EmoGen_deployment_v2/Deployment_version/web_user_log.txt
+EmoGen_deployment_v2/Deployment_version/web_data_temp.json
+EmoGen_deployment_v2/Deployment_version/web_data.json
+EmoGen_deployment_v2/Deployment_version/.idea/workspace.xml

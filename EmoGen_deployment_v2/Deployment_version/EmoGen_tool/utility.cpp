@@ -265,7 +265,7 @@ cv::Mat utility::read_csv(std::string input_csv){
         while ( file.good() ) {    
              
              std::string value;
-	     getline ( file, value, ',' ); 
+	     getline ( file, value, ',' );
 
 
              std::size_t pos = value.find('\n');
@@ -1279,12 +1279,13 @@ void utility::write_session_to_csv_file(std::string filename){
 		  session_file << my_data -> full_account.at<double>(GenNr_counter * (2 + NumberOfBlendshapes) + 2 + blnd_nr, 9) << std::endl;
 
       }
-              
 
-   
-		
+
+
+
       session_file.close();
-      
+
+      std::cout << "Session saved!" << std::endl;
 
 }    
 
