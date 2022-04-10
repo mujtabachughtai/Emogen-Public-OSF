@@ -744,7 +744,7 @@ int main(int argc, char** argv) {
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
 
-    //glfwSwapBuffers(eglDisplay, eglSurface);
+    //glfwSwapBuffers(eglDisplay, eglSurface); //TODO: Enable this ?
 
     std::cout << "Saving..." << std::endl;
     cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
