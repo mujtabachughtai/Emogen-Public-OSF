@@ -362,9 +362,9 @@ int main(int argc, char** argv) {
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
 
-    auto start = std::chrono::steady_clock::now();
+    start = std::chrono::steady_clock::now();
     load_initialisation(indices, vertices, uvs, normals);
-    auto end = std::chrono::steady_clock::now();
+    end = std::chrono::steady_clock::now();
     std::cout << ">>> Elapsed time in seconds for (load_initialisation()): "
               << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
               << " sec";
