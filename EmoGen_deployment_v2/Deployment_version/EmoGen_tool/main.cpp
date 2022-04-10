@@ -301,8 +301,13 @@ int main(int argc, char** argv) {
     std::cout << "Lower lips" << std::endl;
     my_data -> lower_lip_coordinates = helper.read_barycentrics(argv[14]);
 
-
+    auto start = chrono::steady_clock::now();
     bool check_model = load_blendshapes_speedy(atoi(argv[24]));
+    auto end = chrono::steady_clock::now();
+    std::cout << ">>> Elapsed time in seconds for (load_blendshapes_speedy()): "
+              << chrono::duration_cast<chrono::seconds>(end - start).count()
+              << " sec";
+
     if (!check_model) return 1;
 
     for (int nr = 0; nr < NumberOfBlendshapes; ++nr) {
@@ -357,7 +362,12 @@ int main(int argc, char** argv) {
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
 
+    auto start = chrono::steady_clock::now();
     load_initialisation(indices, vertices, uvs, normals);
+    auto end = chrono::steady_clock::now();
+    std::cout << ">>> Elapsed time in seconds for (load_initialisation()): "
+              << chrono::duration_cast<chrono::seconds>(end - start).count()
+              << " sec";
 
     // to get the correctives into the previous initialisation
     my_data ->prepare_for_next_generation();
@@ -605,7 +615,12 @@ int main(int argc, char** argv) {
         // Generate new iteration
         generateNextGen(); //NOTE: this will generate new weights too
 
+        auto start = chrono::steady_clock::now();
         update_faces(vertices, normals);
+        auto end = chrono::steady_clock::now();
+        std::cout << ">>> Elapsed time in seconds for (update_faces()): "
+                  << chrono::duration_cast<chrono::seconds>(end - start).count()
+                  << " sec";
 
 
         std::cout << "GENERATED AND UPDATED" << std::endl;
@@ -838,7 +853,7 @@ bool load_blendshapes_speedy(int expected_number) {
         if (name == "") break;
 
         std::size_t found_special;
-        std::cout<<"Blendshape: " << NumberOfBlendshapes << " " <<  BLENDSHAPE_DIRECTORY +  name + ".obj" << std::endl;
+        //std::cout<<"Blendshape: " << NumberOfBlendshapes << " " <<  BLENDSHAPE_DIRECTORY +  name + ".obj" << std::endl;
         int blnd_type = helper.left_or_right(name, found_special);
 
         if (blnd_type == 1) {

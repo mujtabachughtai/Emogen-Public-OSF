@@ -124,7 +124,7 @@ int data::initialise() {
         memset(&weights_current_generation[face_nr][0], 0, weights_current_generation[face_nr].size() * sizeof(double));
 
 
-        std::cout << "Initializing from .csv... setting previous and current weights to the same values.." << std::endl;
+        //std::cout << "Initializing from .csv... setting previous and current weights to the same values.." << std::endl;
         double* data = initialisation.ptr<double>((init_number - 1) * 10 + face_nr,0);
 
         memcpy(&weights_previous_generation[face_nr][0],
