@@ -84,7 +84,7 @@ int data::initialise() {
 
 
         if (initialisation.rows == 0) {
-            std::cout << "READING CSV... Alex, file: " + INITIALISATION_FILE << std::endl;
+            std::cout << "Reading .csv file... " + INITIALISATION_FILE << std::endl;
             cv::Mat initialisation_data_stream = helper.read_csv(INITIALISATION_FILE);
 
             initialisation = initialisation_data_stream.reshape(0, NumberOfBlendshapes);
@@ -124,7 +124,7 @@ int data::initialise() {
         memset(&weights_current_generation[face_nr][0], 0, weights_current_generation[face_nr].size() * sizeof(double));
 
 
-        std::cout << "INIT FROM CSV... SETTING PREVIOUS AND CURRENT WEIGHT TO SAME VALUES  Alex" << std::endl;
+        std::cout << "Initializing from .csv... setting previous and current weights to the same values.." << std::endl;
         double* data = initialisation.ptr<double>((init_number - 1) * 10 + face_nr,0);
 
         memcpy(&weights_previous_generation[face_nr][0],

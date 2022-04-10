@@ -59,8 +59,6 @@
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#include "FileWatch.hpp" //https://github.com/ThomasMonkman/filewatch#3
-#include "json.hpp" //https://json.nlohmann.me/features/arbitrary_types/, https://github.com/nlohmann/json
 
 int fileWatcherChecker = -1;
 using json = nlohmann::json;
@@ -167,43 +165,7 @@ bool include_eye_pupil_motion;
 bool include_eye_lid_motion;
 
 int min_num_of_sel, max_num_of_sel;
-
 bool continuing = false;
-
-void threadFunction()
-{
-
-    while ((exit_code != 3) && !(GenNr_counter>0 && exit_code==1 && unit_test)) {
-
-
-        while(stall_interface){std::cout << "";}
-        if (exit_code == 3) break;
-
-        auto app = Gtk::Application::create();
-        std::cout << "Hello I am multithread How are you?" << std::endl;
-        std::fill(active_faces.begin(), active_faces.end(), false);
-        std::fill(monster_faces.begin(), monster_faces.end(), false);
-
-        box_multiwidget a_box_multiwidget;
-        a_box_multiwidget.move(1300,500);
-        app->run(a_box_multiwidget);
-
-        app ->quit();
-        stall_interface = true;
-
-    }
-
-    return;
-}
-
-//std::uniform_real_distribution<double> distribution_global;
-
-static std::string cross_platform_string(std::string&& string)
-{
-    return std::forward<std::string>(string);
-}
-
-const auto web_data_path = cross_platform_string("/home/emogen_all/emoGen/EmoGen_deployment_v2/Deployment_version/web_data.json");
 
 int main(int argc, char** argv) {
 
@@ -212,97 +174,12 @@ int main(int argc, char** argv) {
 
     std::cout << "In MAIN()" << std::endl;
 
-    std::cout << "is_user_continuin conv." << std::endl;
     std::stringstream is_user_continuing(argv[27]);
-    is_user_continuing >> std::boolalpha >> continuing;
+    is_user_continuing >> std::boolalpha >> continuing; //conversion to bool
     std::cout << "GenNr_counter conv." << std::endl;
     GenNr_counter = atoi(argv[28]);
     USER_DIRECTORY = argv[50];
     std::cout << "USER_DIRECTORY is " + USER_DIRECTORY << std::endl;
-
-
-
-    //code to run outside
-//    std::ifstream i(web_data_path);
-//    json web_data_json;
-//    i >> web_data_json;
-//
-//    std::cout << "loaded json" << '\n';
-//
-//    std::cout << web_data_json["active_faces_0"].get<char>() << '\n';
-//    active_faces[0] = web_data_json["active_faces_0"].get<char>();
-//    std::cout << active_faces[0] << '\n';
-//    exit(0);
-    // !code to tun outside
-
-//       alex: initialise file watcher, file, "web_data.json", needs to exist before running
-//    filewatch::FileWatch<std::string> watch(
-//            web_data_path, [](const std::string& path, const filewatch::Event change_type) {
-//                switch (change_type)
-//                {
-//                    case filewatch::Event::added: {
-//                        std::cout << "The file was added to the directory." << '\n';
-//
-//                        break;
-//                    }
-//                    case filewatch::Event::removed: {
-//                        std::cout << "The file was removed from the directory." << '\n';
-//                        break;
-//                    }
-//                    case filewatch::Event::modified:{
-//                        //Errors here are silent so you might need to run code outside this to debug
-//                        fileWatcherChecker+=1;
-//                        if(fileWatcherChecker % 2 == 0 && exit_code == -1) {
-//                            std::cout << "The json file was modified. This can be a change in the time stamp or attributes." << '\n';
-//
-//                            std::ifstream i(web_data_path);
-//                            json web_data_json;
-//                            i >> web_data_json;
-//
-//                            std::cout << "loaded json" << '\n';
-//
-//                            active_faces[0] = web_data_json["active_face_0"].get<int>();
-//                            active_faces[1] = web_data_json["active_face_1"].get<int>();
-//                            active_faces[2] = web_data_json["active_face_2"].get<int>();
-//                            active_faces[3] = web_data_json["active_face_3"].get<int>();
-//                            active_faces[4] = web_data_json["active_face_4"].get<int>();
-//                            active_faces[5] = web_data_json["active_face_5"].get<int>();
-//                            active_faces[6] = web_data_json["active_face_6"].get<int>();
-//                            active_faces[7] = web_data_json["active_face_7"].get<int>();
-//                            active_faces[8] = web_data_json["active_face_8"].get<int>();
-//                            active_faces[9] = web_data_json["active_face_9"].get<int>();
-//
-//                            monster_faces[0] = web_data_json["monster_face_0"].get<int>();
-//                            monster_faces[1] = web_data_json["monster_face_1"].get<int>();
-//                            monster_faces[2] = web_data_json["monster_face_2"].get<int>();
-//                            monster_faces[3] = web_data_json["monster_face_3"].get<int>();
-//                            monster_faces[4] = web_data_json["monster_face_4"].get<int>();
-//                            monster_faces[5] = web_data_json["monster_face_5"].get<int>();
-//                            monster_faces[6] = web_data_json["monster_face_6"].get<int>();
-//                            monster_faces[7] = web_data_json["monster_face_7"].get<int>();
-//                            monster_faces[8] = web_data_json["monster_face_8"].get<int>();
-//                            monster_faces[9] = web_data_json["monster_face_9"].get<int>();
-//
-//                            eliteFace = web_data_json["elite_face"].get<int>();
-//
-//                            exit_code = 0;
-//
-//                            std::cout << "moving on" << '\n';
-//
-//                            break;
-//
-//                        }
-//                    }
-//                    case filewatch::Event::renamed_old: { // TODO: This gets triggered so remove it
-//                        //std::cout << "The file was renamed and this is the old name." << '\n';
-//                        break;
-//                    }
-//                    case filewatch::Event::renamed_new: {
-//                        std::cout << "The file was renamed and this is the new name." << '\n';
-//                        break;
-//                    }
-//                };
-//            });
 
     window_width = atoi(argv[25]) * 0.5; //1024
     window_height = atoi(argv[26]) * (2.0/3.0); //768
@@ -349,11 +226,6 @@ int main(int argc, char** argv) {
 
 
     helper = utility();
-
-    //Removed 06/01/2021
-    //active_faces.resize(10);
-    //monster_faces.resize(10);
-
 
     BLENDSHAPE_DIRECTORY=argv[1];
     orderOfblendshapes_FILE=argv[2];
@@ -492,9 +364,8 @@ int main(int argc, char** argv) {
     my_data ->prepare_for_next_generation();
 
     // 3. visualise 10 faces + run GUI for clicking
-    // initialise the OpenGL renderer (EGL now - alex)
+    // initialise the EGL renderer
 
-    //EGL Code - alex (replacing glfw)
     EGLDeviceEXT eglDevs[10];
     EGLint numDevices;
 
@@ -589,8 +460,6 @@ int main(int argc, char** argv) {
     std::cout << "gl major,minor: " << glMajor << ", " << glMinor << std::endl;
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    // ! EGL Code - alex!
-
     glewExperimental=true;
     if (glewInit() != GLEW_OK) {
         std::cout <<"Failed to initialize GLEW" << std::endl;
@@ -647,537 +516,229 @@ int main(int argc, char** argv) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
 
-    //std::thread fun_1(threadFunction); // NOTE: alex replace for appropriate Web interaction
-
-
     std::string session_output_filename;
 
-    // old while started from here
-//    do{
-////      TODO: Continue from here. Here you should save the weights and generation number each time.
-////      Every time the "generate next generation" is clicked then save the weights and generation number.
-////      Ther should be a save button that generates additional files with the user id and anything else relevant to they can be used to initiliase and continue the session.
-////      The if here btw, gets executed after the switch case below.
-////
-////    my_data->chosen_rows.size() != 0 is changed in exit_code = 2 then the while loop arrives here and this is true. Case for exit_code 2 " next generation does nothing else but change my_data->chosen_rows
-        if ( continuing ) { //if a previous session is found, continuing is true if previous session files are found and params are passed
+    if ( continuing ) {
 
-            std::cout << "Continuing..." << std::endl;
+        std::cout << "Continuing..." << std::endl;
 
-            active_faces[0] = atoi(argv[29]);
-            active_faces[1] = atoi(argv[30]);
-            active_faces[2] = atoi(argv[31]);
-            active_faces[3] = atoi(argv[32]);
-            active_faces[4] = atoi(argv[33]);
-            active_faces[5] = atoi(argv[34]);
-            active_faces[6] = atoi(argv[35]);
-            active_faces[7] = atoi(argv[36]);
-            active_faces[8] = atoi(argv[37]);
-            active_faces[9] = atoi(argv[38]);
-            eliteFace = atoi(argv[39]);
-            monster_faces[0] = atoi(argv[40]);
-            monster_faces[1] = atoi(argv[41]);
-            monster_faces[2] = atoi(argv[42]);
-            monster_faces[3] = atoi(argv[43]);
-            monster_faces[4] = atoi(argv[44]);
-            monster_faces[5] = atoi(argv[45]);
-            monster_faces[6] = atoi(argv[46]);
-            monster_faces[7] = atoi(argv[47]);
-            monster_faces[8] = atoi(argv[48]);
-            monster_faces[9] = atoi(argv[49]);
+        active_faces[0] = atoi(argv[29]);
+        active_faces[1] = atoi(argv[30]);
+        active_faces[2] = atoi(argv[31]);
+        active_faces[3] = atoi(argv[32]);
+        active_faces[4] = atoi(argv[33]);
+        active_faces[5] = atoi(argv[34]);
+        active_faces[6] = atoi(argv[35]);
+        active_faces[7] = atoi(argv[36]);
+        active_faces[8] = atoi(argv[37]);
+        active_faces[9] = atoi(argv[38]);
+        eliteFace = atoi(argv[39]);
+        monster_faces[0] = atoi(argv[40]);
+        monster_faces[1] = atoi(argv[41]);
+        monster_faces[2] = atoi(argv[42]);
+        monster_faces[3] = atoi(argv[43]);
+        monster_faces[4] = atoi(argv[44]);
+        monster_faces[5] = atoi(argv[45]);
+        monster_faces[6] = atoi(argv[46]);
+        monster_faces[7] = atoi(argv[47]);
+        monster_faces[8] = atoi(argv[48]);
+        monster_faces[9] = atoi(argv[49]);
 
+        // record is zeroed in GenerateNextGeneration()
+        // update_faces() creates populates global record with a header of 2 rows of length 10
+        // and current weights of the #Blendshapes x 10 faces after application of correctives etc.
 
-            //NOTE: below copied from exit_code = 2 case, alex
+        record.at<double>(0,eliteFace - 1) = 1.0;
+        for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
+            if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
 
-            // record is zeroed in GenerateNextGeneration()
-            // update_faces() creates populates global record with a header of 2 rows of length 10
-            // and current weights of the #Blendshapes x 10 faces after application of correctives etc.
-
-            record.at<double>(0,eliteFace - 1) = 1.0;
-            for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-                if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
-
-            my_data -> full_account.push_back(record);
-            session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
-            helper.write_session_to_csv_file(session_output_filename);
+        my_data -> full_account.push_back(record);
+        session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
+        helper.write_session_to_csv_file(session_output_filename);
 
 
-            my_data->chosen_rows.clear();
-            my_data->chosen_rows.push_back((eliteFace - 1));
-            for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-                if ( active_faces[face_iter]!= false && face_iter != (eliteFace - 1) ) my_data->chosen_rows.push_back(face_iter);
+        my_data->chosen_rows.clear();
+        my_data->chosen_rows.push_back((eliteFace - 1));
+        for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
+            if ( active_faces[face_iter]!= false && face_iter != (eliteFace - 1) ) my_data->chosen_rows.push_back(face_iter);
 
 
-            if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
+        if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
 
-                monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-                time_t now = time(0);
-                monster_log << ctime(&now);
-                for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
-                    if( monster_faces[face_iter] ) {
-                        for(int i = 0; i < NumberOfBlendshapes; ++i)
-                            monster_log << my_data->weights_current_generation[face_iter][i] << " ";
-                        monster_log << std::endl;
-                    }
-
+            monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
+            time_t now = time(0);
+            monster_log << ctime(&now);
+            for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
+                if( monster_faces[face_iter] ) {
+                    for(int i = 0; i < NumberOfBlendshapes; ++i)
+                        monster_log << my_data->weights_current_generation[face_iter][i] << " ";
+                    monster_log << std::endl;
                 }
-                monster_log << std::endl;
-                monster_log.close();
 
             }
+            monster_log << std::endl;
+            monster_log.close();
 
-            //alex: at this point no pic is generated
+        }
 
-            if (GenNr_counter == maximum_number_of_generations ){
-                std::cout << "MAX GEN COUNT REACHED " << std::endl;
-                // std::cout << "Saving and exiting the tool " << std::endl;
-                // save_result();
-                my_data->chosen_rows.clear();
-                exit_code = 3;
-                stall_interface = false;
+        //Note: At this point no pic is generated
 
-            } else{
-                exit_code = -1;
-            }
-
-//            Then start generating next gen based on the user choices
-
-            std::cout << "GENERATION NUMBER " << GenNr_counter + 1 << std::endl; // TODO: load from file the GenNr_counter
-
-            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-            stats_dump << "generation number," << GenNr_counter + 1 << std::endl;
-            stats_dump.close();
-
-            // Generate new iteration
-            generateNextGen(); //NOTE: this will generate new weights too
-
-            update_faces(vertices, normals);
-
-
-            std::cout << "GENERATED AND UPDATED" << std::endl;
-
-            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-            void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-            memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
-            glUnmapBuffer(GL_ARRAY_BUFFER);
-
-            glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-            ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-            memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
-            glUnmapBuffer(GL_ARRAY_BUFFER);
-
-
-            GenNr_counter++;
-
-            my_data ->prepare_for_next_generation();
-
-            save_custom_session(my_data->weights_current_generation, GenNr_counter, USER_DIRECTORY);
-
+        if (GenNr_counter == maximum_number_of_generations ){
+            std::cout << "MAX GEN COUNT REACHED " << std::endl;
+            // std::cout << "Saving and exiting the tool " << std::endl;
+            // save_result();
             my_data->chosen_rows.clear();
+            exit_code = 3;
             stall_interface = false;
 
+        } else{
+            exit_code = -1;
         }
 
+        //Then start generating next gen based on the user choices
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        std::cout << "GENERATION NUMBER " << GenNr_counter + 1 << std::endl;
 
-        glUseProgram(programID);
-        glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar);
+        stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
+        stats_dump << "generation number," << GenNr_counter + 1 << std::endl;
+        stats_dump.close();
 
-        glm::mat4 ViewMatrix = glm::lookAt(
-                glm::vec3(camera_position.x, camera_position.y, camera_position.z),
-                glm::vec3(camera_position.x, camera_position.y, lookat_z),
-                glm::vec3(0, 1 ,0)
-        );
+        // Generate new iteration
+        generateNextGen(); //NOTE: this will generate new weights too
 
-
-        glm::mat4 ModelMatrix =  glm::mat4(1.0);
-        glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        update_faces(vertices, normals);
 
 
-        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+        std::cout << "GENERATED AND UPDATED" << std::endl;
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, Texture);
-        if (format == "png") {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
-        glUniform1i(TextureID, 0);
-
-
-        glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-                0,
-                3,
-                GL_FLOAT,
-                GL_FALSE,
-                0,
-                (void*)0
-        );
+        void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
+        glUnmapBuffer(GL_ARRAY_BUFFER);
 
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-        glVertexAttribPointer(
-                1,
-                2,
-                GL_FLOAT,
-                GL_FALSE,
-                0,
-                (void*)0
-        );
-
-        glEnableVertexAttribArray(2);
         glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glVertexAttribPointer(
-                2,
-                3,
-                GL_FLOAT,
-                GL_FALSE,
-                0,
-                (void*)0
-        );
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
+        glUnmapBuffer(GL_ARRAY_BUFFER);
 
 
+        GenNr_counter++;
 
-        initText2D((SHADER_DIRECTORY + "Holstein.DDS").c_str());
-        printText2D("1", 115, 384, 50);
-        printText2D("2", 299, 384, 50);
-        printText2D("3", 485, 384, 50);
-        printText2D("4", 670, 384, 50);
-        printText2D("5", 860, 384, 50);
-        printText2D("6", 102, 20, 50);
-        printText2D("7", 299, 20, 50);
-        printText2D("8", 485, 20, 50);
-        printText2D("9", 670, 20, 50);
-        printText2D("1", 840, 20, 50);
-        printText2D("0", 873, 20, 50);
+        my_data ->prepare_for_next_generation();
 
-        cleanupText2D();
+        save_custom_session(my_data->weights_current_generation, GenNr_counter, USER_DIRECTORY);
 
-        glEnable(GL_DEPTH_TEST); // Enable depth test
-        glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
+        my_data->chosen_rows.clear();
+        stall_interface = false;
+
+    }
 
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //TODO: alex swap buffers here EGL
-//	          glfwSwapBuffers(window);
-//	          glfwPollEvents();
+    glUseProgram(programID);
+    glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar);
+
+    glm::mat4 ViewMatrix = glm::lookAt(
+            glm::vec3(camera_position.x, camera_position.y, camera_position.z),
+            glm::vec3(camera_position.x, camera_position.y, lookat_z),
+            glm::vec3(0, 1 ,0)
+    );
 
 
-        std::cout << "Saving..." << std::endl;
-        cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
-        //eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext); // TODO: might not be need ?
-        //glBindFramebuffer(GL_FRAMEBUFFER, framebufferName);
-        //glBindTexture(GL_TEXTURE_2D, Texture);
-        glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
-        cv::flip(res, res, 0);
-//        return base64 to client
-        SaveImage(res, "/home/emogen_all/emoGen-web/emogen_rails/public/results/" + USER_DIRECTORY + "/result.png");
+    glm::mat4 ModelMatrix =  glm::mat4(1.0);
+    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+    glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+    glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-//
-////        This gets executed after "Next Generation" only
-//        switch(exit_code) {
-//
-//            case 0: { //NEXT GENERATION
-//
-//                std::cout << "case 0" << std::endl;
-//                std::cout << "exit_code: " << std::endl;
-//                std::cout << exit_code << std::endl;
-//
-//                //setting this to false to save the next frame
-//                frame_saved = false;
-//
-//                // record is zeroed in GenerateNextGeneration()
-//                // update_faces() creates populates global record with a header of 2 rows of length 10
-//                // and current weights of the #Blendshapes x 10 faces after application of correctives etc.
-//
-//                record.at<double>(0,eliteFace - 1) = 1.0;
-//                for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-//                    if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
-//
-//                my_data -> full_account.push_back(record);
-//                session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
-//                helper.write_session_to_csv_file(session_output_filename);
-//
-//
-//                my_data->chosen_rows.clear();
-//                my_data->chosen_rows.push_back((eliteFace - 1));
-//                for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-//                    if ( active_faces[face_iter]!= false && face_iter != (eliteFace - 1) ) my_data->chosen_rows.push_back(face_iter);
-//
-//
-//                if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
-//
-//                    monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-//                    time_t now = time(0);
-//                    monster_log << ctime(&now);
-//                    for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
-//                        if( monster_faces[face_iter] ) {
-//                            for(int i = 0; i < NumberOfBlendshapes; ++i)
-//                                monster_log << my_data->weights_current_generation[face_iter][i] << " ";
-//                            monster_log << std::endl;
-//                        }
-//
-//                    }
-//                    monster_log << std::endl;
-//                    monster_log.close();
-//
-//                }
-//
-//                //alex: at this point no pic is generated
-//
-//                if (GenNr_counter == maximum_number_of_generations ){
-//
-//                    // std::cout << "Saving and exiting the tool " << std::endl;
-//                    // save_result();
-//                    my_data->chosen_rows.clear();
-//                    exit_code = 3;
-//                    stall_interface = false;
-//
-//                } else { exit_code = -1; }
-//
-//
-//                break;
-//
-//            }
-//
-//            case 1: { //SAVE NOW
-//
-//                std::cout << "case 2" << std::endl;
-//                std::cout << "exit_code: " << std::endl;
-//                std::cout << exit_code << std::endl;
-//
-//                // monster faces are logged
-//                if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
-//
-//                    monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-//                    time_t now = time(0);
-//                    monster_log << ctime(&now);
-//                    for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
-//                        if( monster_faces[face_iter] ) {
-//                            for(int i = 0; i < NumberOfBlendshapes; ++i)
-//                                monster_log << my_data->weights_current_generation[face_iter][i] << " ";
-//                            monster_log << std::endl;
-//                        }
-//
-//                    }
-//                    monster_log << std::endl;
-//                    monster_log.close();
-//
-//                }
-//
-//
-//
-//                if (GenNr_counter> 0 && unit_test == true) {
-//
-//                    if(eliteFace >0 && eliteFace < 11) record.at<double>(0,eliteFace - 1) = 1.0;
-//                    for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-//                        if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
-//
-//                    my_data -> full_account.push_back(record);
-//                    session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
-//
-//
-//                    std::cout << save_numbers.at(0) + 1 << std::endl;
-//                    save_result_custom(save_numbers.at(0), 1);
-//                    std::cout << save_numbers.at(1) + 1 << std::endl;
-//                    save_result_custom(save_numbers.at(1), 2);
-//                    std::cout << save_numbers.at(2) + 1<< std::endl;
-//                    save_result_custom(save_numbers.at(2), 3);
-//                    std::cout << save_numbers.at(3) + 1<< std::endl;
-//                    save_result_custom(save_numbers.at(3), 4);
-//
-//                    helper.write_session_to_csv_file(session_output_filename);
-//                    //fun_1.join();
-//                    std::cout << "Exiting the tool" << std::endl;
-//
-//
-//                    free(my_data);
-//                    glDeleteBuffers(1, &vertexbuffer);
-//                    glDeleteBuffers(1, &uvbuffer);
-//                    glDeleteBuffers(1, &normalbuffer);
-//                    glDeleteBuffers(1, &elementbuffer);
-//                    glDeleteProgram(programID);
-//                    glDeleteTextures(1, &Texture);
-//                    glDeleteVertexArrays(1, &VertexArrayID);
-//
-//                    eglTerminate( eglDisplay );
-//
-//                    std::remove((NEUTRAL_IN_UPDATED_POSITION_FILE).c_str());
-//                    std::remove((NEUTRAL_IN_UPDATED_POSITION_FILE + ".mtl").c_str());
-//                    if (format == "png") SOIL_free_image_data(image);
-//                    return 0;
-//                }
-//
-//                my_data->chosen_rows.clear();
-//                // other choices are irrelevant, not processed
-//                my_data->chosen_rows.push_back((eliteFace - 1));
-//                std::cout << "Saving best face" << std::endl;
-//                save_result();
-//                eliteFace_save_name.clear();
-//                my_data->chosen_rows.clear();
-//
-//
-//                // choices made before save was pressed are cleared
-//                record.row(0).setTo(0);
-//                record.row(1).setTo(0);
-//
-//                exit_code = -1;
-//                stall_interface = false;
-//
-//
-//                break;
-//
-//            }
-//
-//            case 2: { // RESET SESSION
-//
-//                std::cout << "case 2" << std::endl;
-//                std::cout << "exit_code: " << std::endl;
-//                std::cout << exit_code << std::endl;
-//
-//                // after NextGeneration()+update_faces() or Save Now or init
-//
-//                if(eliteFace >0 && eliteFace < 11) record.at<double>(0,eliteFace - 1) = 1.0;
-//                for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-//                    if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
-//
-//                my_data -> full_account.push_back(record);
-//                session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
-//                helper.write_session_to_csv_file(session_output_filename);
-//
-//                record.setTo(0.0);
-//
-//                if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
-//
-//                    monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-//                    time_t now = time(0);
-//                    monster_log << ctime(&now);
-//                    for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
-//                        if( monster_faces[face_iter] ) {
-//                            for(int i = 0; i < NumberOfBlendshapes; ++i)
-//                                monster_log << my_data->weights_current_generation[face_iter][i] << " ";
-//                            monster_log << std::endl;
-//                        }
-//
-//                    }
-//                    monster_log << std::endl;
-//                    monster_log.close();
-//
-//                }
-//                my_data -> full_account = cv::Mat();
-//
-//                my_data->chosen_rows.clear();
-//                GenNr_counter = 0;
-//
-//                stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-//                stats_dump << "session identifier," << EMOTION_TYPE << "," << my_data -> session_nr  + 1<< std::endl;
-//                stats_dump.close();
-//
-//                my_data -> initialise();
-//                my_data -> copied_exactly_IDs.clear();
-//                update_faces(vertices, normals);
-//
-//                // for copied exactly to work correctly with update_face() corrections after reset
-//                my_data ->prepare_for_next_generation();
-//
-//                std::cout << "Session reinitialised " << std::endl;
-//                glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-//                void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-//                memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
-//                glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//                glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//                ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-//                memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
-//                glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//                exit_code = -1;
-//                stall_interface = false;
-//
-//                break;
-//
-//            }
-//
-//            case 3: { //CLOSE
-//
-//                std::cout << "case 3" << std::endl;
-//                std::cout << "exit_code: " << std::endl;
-//                std::cout << exit_code << std::endl;
-//
-//                // otherwise would have written to file already
-//                if (GenNr_counter !=  maximum_number_of_generations  ) {
-//
-//                    if(eliteFace >0 && eliteFace < 11) record.at<double>(0,eliteFace - 1) = 1.0;
-//                    for (int face_iter = 0; face_iter < active_faces.size(); ++face_iter)
-//                        if ( active_faces[face_iter]!= false ) record.at<double>(1, face_iter) = 1.0;
-//
-//                    my_data -> full_account.push_back(record);
-//                    session_output_filename = OUTPUT_DIRECTORY + EMOTION_TYPE + "_output_" + std::to_string(my_data->session_nr) +".csv";
-//                    helper.write_session_to_csv_file(session_output_filename);
-//
-//                    if (!(std::find(monster_faces.begin(), monster_faces.end(), true) == monster_faces.end())) {
-//
-//                        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-//                        time_t now = time(0);
-//                        monster_log << ctime(&now);
-//                        for (int face_iter = 0; face_iter < monster_faces.size(); ++face_iter) {
-//                            if( monster_faces[face_iter] ) {
-//                                for(int i = 0; i < NumberOfBlendshapes; ++i)
-//                                    monster_log << my_data->weights_current_generation[face_iter][i] << " ";
-//                                monster_log << std::endl;
-//                            }
-//
-//                        }
-//                        monster_log << std::endl;
-//                        monster_log.close();
-//
-//                    }
-//
-//                }
-//
-//                free(my_data);
-//
-//                glDeleteBuffers(1, &vertexbuffer);
-//                glDeleteBuffers(1, &uvbuffer);
-//                glDeleteBuffers(1, &normalbuffer);
-//                glDeleteBuffers(1, &elementbuffer);
-//                glDeleteProgram(programID);
-//                glDeleteTextures(1, &Texture);
-//                glDeleteVertexArrays(1, &VertexArrayID);
-//
-//                eglTerminate( eglDisplay );
-//                //fun_1.join();
-//
-//                std::remove((NEUTRAL_IN_UPDATED_POSITION_FILE).c_str());
-//                std::remove((NEUTRAL_IN_UPDATED_POSITION_FILE + ".mtl").c_str());
-//                std::cout << "Exiting the tool" << std::endl;
-//                if (format == "png") SOIL_free_image_data(image);
-//                return 0;
-//
-//            }
-//
-//            default: { break;}
-//
-//        }
-//    } while(true);
 
+    glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, Texture);
+    if (format == "png") {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    glUniform1i(TextureID, 0);
+
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+            0,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void*)0
+    );
+
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glVertexAttribPointer(
+            1,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void*)0
+    );
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glVertexAttribPointer(
+            2,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void*)0
+    );
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+
+
+
+    initText2D((SHADER_DIRECTORY + "Holstein.DDS").c_str());
+    printText2D("1", 115, 384, 50);
+    printText2D("2", 299, 384, 50);
+    printText2D("3", 485, 384, 50);
+    printText2D("4", 670, 384, 50);
+    printText2D("5", 860, 384, 50);
+    printText2D("6", 102, 20, 50);
+    printText2D("7", 299, 20, 50);
+    printText2D("8", 485, 20, 50);
+    printText2D("9", 670, 20, 50);
+    printText2D("1", 840, 20, 50);
+    printText2D("0", 873, 20, 50);
+
+    cleanupText2D();
+
+    glEnable(GL_DEPTH_TEST); // Enable depth test
+    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
+
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+
+    //glfwSwapBuffers(eglDisplay, eglSurface);
+
+    std::cout << "Saving..." << std::endl;
+    cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
+
+    glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
+    cv::flip(res, res, 0);
+    //return base64 to client
+    SaveImage(res, "/home/emogen_all/emoGen-web/emogen_rails/public/results/" + USER_DIRECTORY + "/result.png");
 
     if (format == "png") SOIL_free_image_data(image);
     return 0;
