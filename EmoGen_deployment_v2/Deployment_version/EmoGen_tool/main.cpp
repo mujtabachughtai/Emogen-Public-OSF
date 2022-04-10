@@ -61,7 +61,6 @@
 #include <EGL/eglext.h>
 
 int fileWatcherChecker = -1;
-using json = nlohmann::json;
 
 int GenNr_counter = 0;
 const int MaxGen = 10;
