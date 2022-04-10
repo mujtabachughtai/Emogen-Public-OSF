@@ -301,11 +301,11 @@ int main(int argc, char** argv) {
     std::cout << "Lower lips" << std::endl;
     my_data -> lower_lip_coordinates = helper.read_barycentrics(argv[14]);
 
-    auto start = chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
     bool check_model = load_blendshapes_speedy(atoi(argv[24]));
-    auto end = chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::cout << ">>> Elapsed time in seconds for (load_blendshapes_speedy()): "
-              << chrono::duration_cast<chrono::seconds>(end - start).count()
+              << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
               << " sec";
 
     if (!check_model) return 1;
@@ -362,11 +362,11 @@ int main(int argc, char** argv) {
     std::vector<glm::vec2> uvs;
     std::vector<glm::vec3> normals;
 
-    auto start = chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
     load_initialisation(indices, vertices, uvs, normals);
-    auto end = chrono::steady_clock::now();
+    auto end = std::chrono::steady_clock::now();
     std::cout << ">>> Elapsed time in seconds for (load_initialisation()): "
-              << chrono::duration_cast<chrono::seconds>(end - start).count()
+              << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
               << " sec";
 
     // to get the correctives into the previous initialisation
@@ -615,11 +615,11 @@ int main(int argc, char** argv) {
         // Generate new iteration
         generateNextGen(); //NOTE: this will generate new weights too
 
-        auto start = chrono::steady_clock::now();
+        auto start = std::chrono::steady_clock::now();
         update_faces(vertices, normals);
-        auto end = chrono::steady_clock::now();
+        auto end = std::chrono::steady_clock::now();
         std::cout << ">>> Elapsed time in seconds for (update_faces()): "
-                  << chrono::duration_cast<chrono::seconds>(end - start).count()
+                  << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
                   << " sec";
 
 
@@ -1794,7 +1794,7 @@ void generateNextGen() {
 
 void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
 
-    unsigned seed = 1234567; //std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
     std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
@@ -1862,7 +1862,7 @@ void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
 void mutateBlendshapes(std::vector<double> &face_to_mutate, double minMR, double MR, std::vector<int>&which_blnd_nrs) {
 
 
-    unsigned seed = 1234567; //std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
     std::uniform_real_distribution<double> distribution(minMR, MR);
 
@@ -1884,7 +1884,7 @@ void mutateBlendshapes(std::vector<double> &face_to_mutate, double minMR, double
 
 std::vector<double> randBlendshapes(double MR, std::vector<int>&which_blnd_nrs) {
 
-    unsigned seed = 1234567; //std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
     std::uniform_real_distribution<double> distribution(0, MR);
 
