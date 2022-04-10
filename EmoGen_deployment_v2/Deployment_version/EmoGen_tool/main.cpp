@@ -306,7 +306,7 @@ int main(int argc, char** argv) {
     auto end = std::chrono::steady_clock::now();
     std::cout << ">>> Elapsed time in seconds for (load_blendshapes_speedy()): "
               << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-              << " sec";
+              << " sec" << std::endl;
 
     if (!check_model) return 1;
 
@@ -367,7 +367,7 @@ int main(int argc, char** argv) {
     end = std::chrono::steady_clock::now();
     std::cout << ">>> Elapsed time in seconds for (load_initialisation()): "
               << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-              << " sec";
+              << " sec" << std::endl;
 
     // to get the correctives into the previous initialisation
     my_data ->prepare_for_next_generation();
@@ -620,7 +620,7 @@ int main(int argc, char** argv) {
         auto end = std::chrono::steady_clock::now();
         std::cout << ">>> Elapsed time in seconds for (update_faces()): "
                   << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-                  << " sec";
+                  << " sec" << std::endl;
 
 
         std::cout << "GENERATED AND UPDATED" << std::endl;
