@@ -264,7 +264,6 @@ cv::Mat utility::read_csv(std::string input_csv){
 
          }
 
-        std::cout << "Total number of elements read:" << counter << std::endl;
         return data_stream;
        
     };
@@ -582,7 +581,6 @@ void utility::apply_any_set_of_blendshapes(aiMesh* mesh, int choice_nr, std::vec
 
 void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool &lip_collision, bool &teeth_collsion, bool as_checker) {
 
-           std::cout << "Computing collisions face nr. " << choice_nr + 1 << std::endl;
 
            /*std::string cloud_top_lip_file = OUTPUT_DIRECTORY +"top_lip"+std::to_string(choice_nr + 1)+".ply";
            
@@ -641,7 +639,6 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
                      all_lower_lip_points.push_back(ptt);
                }
 
-             std::cout << "lower lip points loaded" << std::endl;
 
              int numOfcollision_ptrs =  my_data -> collision_anchor_coordinates.rows;
   
@@ -744,11 +741,9 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 
               }
 
-             std::cout << zone1 << " " << zone2 << " "<< zone3 << " " << zone4 << std::endl;
 
              if (lips_count > 0) collision_lips = true;
              
-             std::cout << "lip collisions found: " << collision_lips <<  std::endl;
 
             /* cloud_top_lip << "element vertex " << active_point_count << std::endl;
              cloud_top_lip << "property float x" << std::endl;
@@ -851,7 +846,6 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
                 }
                  
                 if (count_inside > 0 && count_outside > 0 ) collision_teeth = true;
-                std::cout << "teeth collisions found" << "  " << collision_teeth <<  std::endl;
 
                  
                  lip_collision = collision_lips;
@@ -877,7 +871,6 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 		cloud_bottom_lip2 << "property float z" << std::endl;
 	        cloud_bottom_lip2 << "end_header" << std::endl; */
             
-                std::cout << "true intersections: " << lips_count << " " << teeth_count << std::endl;
 
                 if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
                 
@@ -969,7 +962,6 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 	       } 
                    
                int constraints_lips = A_local.rows;
-               std::cout << " Constraints accumulated for lips " <<  A_local.rows <<  std::endl;
 
 	       for (unsigned int anchor_nr_teeth = 0; anchor_nr_teeth < numOfteeth_ptrs; ++anchor_nr_teeth) {
 
@@ -1054,18 +1046,15 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
                              
 		      }  
                
-             std::cout << " Constraints accumulated for teeth" << A_local.rows - constraints_lips <<  std::endl;
-             cv::Mat b; 
+             cv::Mat b;
               
              for (unsigned int ptr_nr = 0; ptr_nr < z_offsets.size(); ++ptr_nr)  b.push_back(z_offsets[ptr_nr]); 
              for (unsigned int ptr_nr = 0; ptr_nr < y_offsets.size(); ++ptr_nr)  b.push_back(y_offsets[ptr_nr]); 
  
-             std::cout << "number of constraints: " << cv::countNonZero(b) << std::endl;
 
               if (cv::countNonZero(b) >= 8) {
 
-                      std::cout << "Collision correction on face nr. " << choice_nr + 1 << std::endl;
-                   
+
 		      cv::Mat_<double> collision_weights = cv::Mat(8,1, CV_64F, double(0.0));
 		      double * collision_weights_ptr = (double *) collision_weights.data;
 
@@ -1109,13 +1098,11 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 		       Solver::Summary summary;
 
 		       ceres::Solve(options, &problem_collisions, &summary);      
-		       std::cout  << summary.BriefReport() << std::endl;
                        //std::cout  << summary.FullReport() << std::endl;
 
                        cv::Mat solution;
                        collision_weights.copyTo(solution);
-                       std::cout << "bounded solution" << solution << std::endl;
- 
+
 		       for (unsigned int collision_blnd_nr = 0; collision_blnd_nr < 8; ++collision_blnd_nr) {
 
 		              double corrective_weight = solution.at<double>(collision_blnd_nr);
@@ -1166,8 +1153,7 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 
 void utility::apply_correctives(aiMesh* mesh, int choice_nr){
 
-   std::cout << "face nr: " << choice_nr + 1 << std::endl;
-  for (std::map<int, std::vector<double>>::iterator it_blnd_nr  =  my_data->correctives_to_activation_vector.begin(); 
+  for (std::map<int, std::vector<double>>::iterator it_blnd_nr  =  my_data->correctives_to_activation_vector.begin();
                                                     it_blnd_nr != my_data->correctives_to_activation_vector.end(); ++it_blnd_nr) {
             
                  
@@ -1196,7 +1182,6 @@ void utility::apply_correctives(aiMesh* mesh, int choice_nr){
           double corrective_weight = 1;
           for (unsigned int weight_nr=0; weight_nr < blendweight_vector.size(); ++weight_nr) corrective_weight *= activated_blendweight_vector_mat.at<double>(weight_nr);
 
-          std::cout << "corrective with blendhshape number: " << it_blnd_nr -> first << " corrective_weight: " << corrective_weight << std::endl;
 
           for (unsigned int k=0; k< mesh->mNumVertices; k++){
 
@@ -1258,7 +1243,6 @@ void utility::write_session_to_csv_file(std::string filename){
 
       session_file.close();
 
-      std::cout << "Session saved!" << std::endl;
 
 }    
 

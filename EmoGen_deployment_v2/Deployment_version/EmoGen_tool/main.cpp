@@ -168,14 +168,10 @@ int main(int argc, char** argv) {
     active_faces.resize(10);
     monster_faces.resize(10);
 
-    std::cout << "In MAIN()" << std::endl;
-
     std::stringstream is_user_continuing(argv[27]);
     is_user_continuing >> std::boolalpha >> continuing; //conversion to bool
-    std::cout << "GenNr_counter conv." << std::endl;
     GenNr_counter = atoi(argv[28]);
     USER_DIRECTORY = argv[50];
-    std::cout << "USER_DIRECTORY is " + USER_DIRECTORY << std::endl;
 
     window_width = atoi(argv[25]) * 0.5; //1024
     window_height = atoi(argv[26]) * (2.0/3.0); //768
@@ -187,7 +183,6 @@ int main(int argc, char** argv) {
         || max_num_of_sel <= 0  || min_num_of_sel <= 0
         || max_num_of_sel > 10 ||  min_num_of_sel > 10 )  {
 
-        std::cout << "Error: invalid parameters for minimum/maximum number of selections. Please correct in the configuration file." << std::endl;
         return 1;
     }
 
@@ -256,7 +251,6 @@ int main(int argc, char** argv) {
     std::string texture_file_as_string(TEXTURE_FILE);
     std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
     if (format != "png" && format!= "bmp") {
-        std::cout << "Unknown texture format. Only .png and .bmp can be read " << std::endl;
         return 1;
     }
 
@@ -276,7 +270,6 @@ int main(int argc, char** argv) {
     std::string info_filename =  BLENDSHAPE_DIRECTORY + "data2.dat";
     std::ifstream rf (info_filename, std::ios::in | std::ios::binary);
     if(!rf) {
-        std::cout<< "ERROR: Important data (data2.dat) file is missing. Contact the developer!" << std::endl;
         return 1;
     }
     rf.read(reinterpret_cast<char*> (info.data), 12 * sizeof(double));
@@ -290,19 +283,13 @@ int main(int argc, char** argv) {
     NEUTRAL_IN_UPDATED_POSITION_FILE = argv[11];
 
 
-    std::cout << "Upper Lips" << std::endl;
     my_data -> collision_anchor_coordinates = helper.read_barycentrics(argv[12]);
-    std::cout << "Teeth" << std::endl;
     my_data -> collision_anchor_coordinates_teeth = helper.read_barycentrics(argv[13]);
-    std::cout << "Lower lips" << std::endl;
     my_data -> lower_lip_coordinates = helper.read_barycentrics(argv[14]);
 
     auto start = std::chrono::steady_clock::now();
     bool check_model = load_blendshapes_speedy(atoi(argv[24]));
     auto end = std::chrono::steady_clock::now();
-    std::cout << ">>> Elapsed time in seconds for (load_blendshapes_speedy()): "
-              << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-              << " sec" << std::endl;
 
     if (!check_model) return 1;
 
@@ -355,9 +342,6 @@ int main(int argc, char** argv) {
     start = std::chrono::steady_clock::now();
     load_initialisation(indices, vertices, uvs, normals);
     end = std::chrono::steady_clock::now();
-    std::cout << ">>> Elapsed time in seconds for (load_initialisation()): "
-              << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-              << " sec" << std::endl;
 
     // to get the correctives into the previous initialisation
     my_data ->prepare_for_next_generation();
@@ -371,7 +355,6 @@ int main(int argc, char** argv) {
     PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
     if( eglQueryDevicesEXT == NULL )
     {
-        std::cout << "Can't get eglQueryDevices extension" << std::endl;
         exit(0);
     }
 
@@ -379,14 +362,12 @@ int main(int argc, char** argv) {
     PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
 
     eglQueryDevicesEXT(10, eglDevs, &numDevices);
-    std::cout << "Num devices: " << numDevices << std::endl;
 
     int dcToUse = 0;
     for( unsigned dc = 0; dc < numDevices; ++dc )
     {
         std::string devName( "N/A" );
         std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
-        std::cout << dc << " : " << devName << " : " << devExtensions << std::endl;
 
         if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
         {
@@ -400,7 +381,6 @@ int main(int argc, char** argv) {
 
     EGLint major, minor;
     eglInitialize(eglDisplay, &major, &minor);
-    std::cout << "EGL major, minor: " << major << "," << minor << std::endl;
 
     EGLint configAttribs[] =
             {
@@ -416,7 +396,6 @@ int main(int argc, char** argv) {
     EGLint numConfigs;
     EGLConfig eglCfg;
     eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
-    std::cout << "numConfigs: " << numConfigs << std::endl;
 
     EGLint pbufferAttribs[] =
             {
@@ -428,8 +407,6 @@ int main(int argc, char** argv) {
     EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
     if( eglSurface == EGL_NO_SURFACE )
     {
-        std::cout << "didn't get surface." << std::endl;
-        std::cout << "egl error: " << eglGetError() << std::endl;
         exit(0);
     }
 
@@ -444,7 +421,6 @@ int main(int argc, char** argv) {
     eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
     if( eglContext == NULL )
     {
-        std::cout << "Failed making context." << std::endl;
         exit(0);
     }
 
@@ -456,12 +432,9 @@ int main(int argc, char** argv) {
     GLint glMajor, glMinor;
     glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
     glGetIntegerv(GL_MINOR_VERSION, &glMinor);
-    std::cout << "gl major,minor: " << glMajor << ", " << glMinor << std::endl;
-    std::cout << glGetString(GL_VERSION) << std::endl;
 
     glewExperimental=true;
     if (glewInit() != GLEW_OK) {
-        std::cout <<"Failed to initialize GLEW" << std::endl;
         return -1;
     }
 
@@ -518,8 +491,6 @@ int main(int argc, char** argv) {
     std::string session_output_filename;
 
     if ( continuing ) {
-
-        std::cout << "Continuing..." << std::endl;
 
         active_faces[0] = atoi(argv[29]);
         active_faces[1] = atoi(argv[30]);
@@ -583,8 +554,6 @@ int main(int argc, char** argv) {
         //Note: At this point no pic is generated
 
         if (GenNr_counter == maximum_number_of_generations ){
-            std::cout << "MAX GEN COUNT REACHED " << std::endl;
-            // std::cout << "Saving and exiting the tool " << std::endl;
             // save_result();
             my_data->chosen_rows.clear();
             exit_code = 3;
@@ -596,20 +565,13 @@ int main(int argc, char** argv) {
 
         //Then start generating next gen based on the user choices
 
-        std::cout << "GENERATION NUMBER " << GenNr_counter + 1 << std::endl;
-
         // Generate new iteration
         generateNextGen(); //NOTE: this will generate new weights too
 
         auto start = std::chrono::steady_clock::now();
         update_faces(vertices, normals);
         auto end = std::chrono::steady_clock::now();
-        std::cout << ">>> Elapsed time in seconds for (update_faces()): "
-                  << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-                  << " sec" << std::endl;
 
-
-        std::cout << "GENERATED AND UPDATED" << std::endl;
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
         void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -732,7 +694,6 @@ int main(int argc, char** argv) {
 
     //glfwSwapBuffers(eglDisplay, eglSurface); //TODO: Enable this ?
 
-    std::cout << "Saving..." << std::endl;
     cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
 
     glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
@@ -748,7 +709,6 @@ int main(int argc, char** argv) {
 
 bool load_blendshapes_speedy(int expected_number) {
 
-    std::cout << "Blendshape loading in progress .... " << std::endl;
 
     utility helper;
 
@@ -794,17 +754,14 @@ bool load_blendshapes_speedy(int expected_number) {
     std::string info_filename = BLENDSHAPE_DIRECTORY + "data.dat";
     std::ifstream rf (info_filename, std::ios::in | std::ios::binary);
     if(!rf) {
-        std::cout<< "ERROR: Important data file is missing. Contact the developer!" << std::endl;
         return 1;
     }
     rf.read(reinterpret_cast<char*> (allBlendShapeVertices3Nx1.data), expected_number * numberOfvrtx * 3 * sizeof(double));
     rf.close();
-    std::cout << allBlendShapeVertices3Nx1.type() << std::endl;
 
     std::ifstream blnd_order_infi;
     blnd_order_infi.open(orderOfblendshapes_FILE);
     if(!blnd_order_infi.is_open()) {
-        std::cout << "Error: Could not find the file with the desired order of blendshapes! Exiting.." << std::endl;
         return false;
     }
 
@@ -965,7 +922,6 @@ bool load_blendshapes_speedy(int expected_number) {
     // sanity check
     if (expected_number != NumberOfBlendshapes) {
 
-        std::cout <<"ERROR: shape.txt does not correspond to the blendshape model" << std::endl;
         return false;
 
     }
@@ -976,7 +932,6 @@ bool load_blendshapes_speedy(int expected_number) {
         std::vector<double> activation_vector(NumberOfBlendshapes, 0.0);
 
         if (found_corrective != std::string::npos) {
-            std::cout << it -> second << std::endl;
             char *name_ptr = new char[(it -> first).length() + 1];
             strcpy(name_ptr, (it -> first).c_str());
             char * core_blndsh_name = strtok (name_ptr,"_");
@@ -1058,7 +1013,6 @@ bool load_blendshapes_speedy(int expected_number) {
     record = cv::Mat(NumberOfBlendshapes + 2, 10, CV_64F);
     record.setTo(0.0);
 
-    std::cout<<"Blendshape loading done ...."<< std::endl;
 
     return true;
 }
@@ -1072,7 +1026,6 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
     Assimp::Importer importer;
     for (int choice_nr = 0; choice_nr < 10 ; ++choice_nr) {
 
-        std::cout << "Face nr: " << choice_nr  + 1 << std::endl;
         int offset = vertices.size();
 
         const aiScene * currentScene = importer.ReadFile(Neutral_FILE, aiProcess_JoinIdenticalVertices);
@@ -1112,14 +1065,12 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
                 helper.correct_lip_and_teeth_collisions(mesh, choice_nr, lips, teeth, true);
                 if (lips) {
 
-                    std::cout << "Mouth closed - applying puffs! " << std::endl;
                     helper.apply_any_set_of_blendshapes(mesh, choice_nr, my_data -> puffs);
                     helper.compute_smooth_vertex_normals(mesh);
                     helper.correct_lip_and_teeth_collisions(mesh, choice_nr, lips, teeth, false);
 
 
                 } else if (!lips) {
-                    std::cout << "Removing puffs from the geometry!" << std::endl;
                     for (unsigned int puff_blnd_nr = 0; puff_blnd_nr < my_data -> puffs.size(); ++puff_blnd_nr) {
 
                         int blnd_nr = my_data -> puffs[puff_blnd_nr];
@@ -1236,7 +1187,6 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
 
 void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &normals) {
 
-    std::cout << "update_faces() called! " << std::endl;
 
     int numOfcollision_ptrs =  my_data -> collision_anchor_coordinates.rows;
     vertices.clear();
@@ -1246,7 +1196,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
     for (int choice_nr = 0; choice_nr < 10; ++choice_nr) {
 
 
-        std::cout << "Working on FACE NR. " << choice_nr + 1 << std::endl;
 
         bool copied_exactly = std::find(my_data -> copied_exactly_IDs.begin(),
                                         my_data -> copied_exactly_IDs.end(), choice_nr) != my_data -> copied_exactly_IDs.end();
@@ -1276,7 +1225,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
             // should not happen but just in case any future developments inadvertently upset this..
 
             if(is_corrective && exit_code!=2 && !copied_exactly ) {
-                std::cout << "Error: this correctives of newly generated face must not have a value. Fixing.... " << std::endl;
                 my_data->weights_current_generation[choice_nr][i] = 0.0;
             };
 
@@ -1311,14 +1259,12 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
                 helper.correct_lip_and_teeth_collisions(mesh, choice_nr, lips, teeth, true);
                 if (lips) {
 
-                    std::cout << "Mouth closed - applying puffs! " << std::endl;
                     helper.apply_any_set_of_blendshapes(mesh, choice_nr, my_data -> puffs);
                     helper.compute_smooth_vertex_normals(mesh);
                     helper.correct_lip_and_teeth_collisions(mesh, choice_nr, lips, teeth, false);
 
 
                 } else if (!lips) {
-                    std::cout << "Removing puffs from the geometry!" << std::endl;
                     for (unsigned int puff_blnd_nr = 0; puff_blnd_nr < my_data -> puffs.size(); ++puff_blnd_nr) {
 
                         int blnd_nr = my_data -> puffs[puff_blnd_nr];
@@ -1339,7 +1285,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
 
         } else if (puffs_eliminated) {
 
-            std::cout << "re-apply puffs" << std::endl;
             helper.apply_any_set_of_blendshapes(mesh, choice_nr, my_data -> puffs);
 
         }
@@ -1439,17 +1384,13 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
 
 void generateNextGen() {
 
-    std::cout << "generateNextGen started.." << std::endl;
 
     my_data -> copied_exactly_IDs.clear();
 
 
     unsigned seed_1 = std::chrono::system_clock::now().time_since_epoch().count();
-    std::cout << "seed_1: " << unsigned(seed_1) << std::endl;
     std::mt19937 generator_1(seed_1);
     std::uniform_int_distribution<int> distribution_1(0, (my_data->chosen_rows.size() - 1)); // 1 0 0 1 0 0 1 1 1 1
-    for (int n=0; n<10; ++n)
-        std::cout << distribution_1(generator_1) << ' ';
 
     unsigned seed_2 = seed_1;
     while(seed_2 == seed_1) seed_2 = std::chrono::system_clock::now().time_since_epoch().count();
@@ -1472,7 +1413,6 @@ void generateNextGen() {
 
     for (int face_nr = 0; face_nr < 10; ++face_nr) {
 
-        std::cout << face_nr << std::endl;
 
         if (face_nr == 0) { // pick the elite face
 
@@ -1481,7 +1421,6 @@ void generateNextGen() {
                    NumberOfBlendshapes * sizeof(double));
 
             my_data -> copied_exactly_IDs.push_back(order_of_presentation[0]);
-            std::cout << "updated nr: " << order_of_presentation[0] + 1 << std::endl;
 
 
         }  else if (face_nr == 1 && my_data->chosen_rows.size() > 2) {
@@ -1525,7 +1464,6 @@ void generateNextGen() {
                    &average[0],
                    NumberOfBlendshapes * sizeof(double));
 
-            std::cout << "updated nr: " << order_of_presentation[1] + 1 << std::endl;
 
         } else if (face_nr == 2 && GenNr_counter!=1 && GenNr_counter!=2) {
             // Average of elite face and another selected face; Note to self: why always the first non-elite? CORRECTED BELOW
@@ -1544,7 +1482,6 @@ void generateNextGen() {
                        NumberOfBlendshapes * sizeof(double));
 
 
-                std::cout << "updated nr: " << order_of_presentation[2] + 1 << std::endl;
 
                 my_data -> copied_exactly_IDs.push_back(order_of_presentation[2]);
 
@@ -1591,7 +1528,6 @@ void generateNextGen() {
                    NumberOfBlendshapes * sizeof(double));
 
 
-            std::cout << "updated nr: " << order_of_presentation[2] + 1 << std::endl;
 
 
         } else if (face_nr < 6) { // mutation and cross-breeding
@@ -1641,7 +1577,6 @@ void generateNextGen() {
                    &new_face[0],
                    NumberOfBlendshapes * sizeof(double));
 
-            std::cout << "updated nr: " << order_of_presentation[face_nr] + 1 << std::endl;
 
         } else { // completely new
 
@@ -1682,7 +1617,6 @@ void generateNextGen() {
 
 
 
-            std::cout << "updated nr: " << order_of_presentation[face_nr] + 1 << std::endl;
 
         }
     }
@@ -1963,7 +1897,6 @@ cv::Mat read_csv(std::string input_csv){
 
     }
 
-    std::cout << "Total number of elements read:" <<counter << std::endl;
     return data_stream;
 
 }
@@ -1971,7 +1904,6 @@ cv::Mat read_csv(std::string input_csv){
 void SaveImage(cv::Mat &img, std::string filename)
 {
 
-    std::cout << "Saving " << filename << std::endl;
     if( filename.find(".floatImg") != std::string::npos)
     {
         // this should be an uncompressed float image.
@@ -2017,7 +1949,6 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
     int rows = 150;
     int columns = 10;
 
-    std::cout << "GenNr_counter in save_session " << GenNr_counter << std::endl;
 
     std::ofstream myfile_gen;
     myfile_gen.open("/home/emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/saved_generation.csv");

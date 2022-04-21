@@ -19,7 +19,6 @@ int data::initialise() {
 
     // face_order.clear();
 
-    std::cout << "Face Initialisation" << std::endl;
 
     utility helper = utility();
 
@@ -78,7 +77,6 @@ int data::initialise() {
 
 
         if (initialisation.rows == 0) {
-            std::cout << "Reading .csv file... " + INITIALISATION_FILE << std::endl;
             cv::Mat initialisation_data_stream = helper.read_csv(INITIALISATION_FILE);
 
             initialisation = initialisation_data_stream.reshape(0, NumberOfBlendshapes);
@@ -97,7 +95,6 @@ int data::initialise() {
         for (int i = 0; i < (initialisation.rows / 10); ++i) init_choices.push_back(i+1);
         if (!random_initialisation && find (init_choices.begin(), init_choices.end(), init_number) == init_choices.end() ) {
 
-            std::cout << "Error: selected initialisation set number " << init_number << " does not exist in the initialisation file. Exiting.." << std::endl;
             return 1;
         } else if (random_initialisation) init_number = distribution(generator_global);
 
@@ -135,7 +132,6 @@ int data::initialise() {
 
                     if ( weights_current_generation[face_nr][head_motion_blnds[blnd_nr]] != 0.0) {
 
-                        std::cout << "A POSTERIORI HEAD MOTION DISABLING of face in current position nr., ALEX" << face_nr + 1 << std::endl;
 
                         weights_previous_generation[face_nr][head_motion_blnds[blnd_nr]] = 0.0;
                         weights_current_generation[face_nr][head_motion_blnds[blnd_nr]] = 0.0;
