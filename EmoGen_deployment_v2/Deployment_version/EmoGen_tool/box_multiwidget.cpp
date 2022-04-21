@@ -260,32 +260,28 @@ void box_multiwidget::on_button_clicked(Glib::ustring data)
      monster_faces[9] = m_button_check10_ml.get_active();
 
 
-     for (int k=0; k < active_faces.size(); ++k) std::cout << active_faces[k] << " ";
-     std::cout << std::endl;
 
      eliteFace = atoi(m_Entry.get_text().c_str());
-     
-     std::cout << data << " was pressed" << std::endl;
 
-     
+
+
      int numberOfnonSelections = std::count(active_faces.begin(), active_faces.end(), 0);
-     int numberOfSelections = active_faces.size() - numberOfnonSelections; 
+     int numberOfSelections = active_faces.size() - numberOfnonSelections;
 
      //m_Entry.set_text("Enter best face number here (required).");
-     if( (numberOfSelections >= min_num_of_sel) && (numberOfSelections <= max_num_of_sel) ) { 
-           m_button.set_sensitive(true);  
+     if( (numberOfSelections >= min_num_of_sel) && (numberOfSelections <= max_num_of_sel) ) {
+           m_button.set_sensitive(true);
      }else{ m_button.set_sensitive(false); }
 
 
      std::string signal = data.c_str();
      if (signal.compare("NEXT GENERATION") == 0 ) {
-         std::cout << "Elite face: " << eliteFace << std::endl;
          if (eliteFace <= 0 || eliteFace > 10) {
 
            m_Entry.set_text("ERROR: No (valid) BEST FACE number entered.");
 
          } else if ( active_faces[eliteFace - 1] != 1) {
-           
+
            m_Entry.set_text("ERROR: Entered number is not among the selections.");
 
          } else {
@@ -298,23 +294,21 @@ void box_multiwidget::on_button_clicked(Glib::ustring data)
 
      if (signal.compare("SAVE NOW") == 0) {
 
-           eliteFace_save_name = m_Entry_save_name.get_text().c_str(); 
-           std::cout << eliteFace_save_name << " " << eliteFace_save_name.compare("Enter filename for chosen face") <<  std::endl;
+           eliteFace_save_name = m_Entry_save_name.get_text().c_str();
            if (eliteFace <= 0 || eliteFace > 10)  {
 
               m_Entry.set_text("ERROR: No (valid) BEST FACE number to save.");
 
-           } else if (eliteFace_save_name.empty() || !eliteFace_save_name.compare("Enter filename for chosen face") 
+           } else if (eliteFace_save_name.empty() || !eliteFace_save_name.compare("Enter filename for chosen face")
                                                   || !eliteFace_save_name.compare("ERROR: Please enter filename") ) {
 
               m_Entry_save_name.set_text("ERROR: Please enter filename");
 
            } else {
-                 std::cout << "Best face will be saved under name.. " << eliteFace_save_name << std::endl;    
 		 exit_code = 1;
                  this -> close();
            }
-    
+
      }
 
      if (signal.compare("RESET SESSION") == 0) {

@@ -796,7 +796,6 @@ bool load_blendshapes_speedy(int expected_number) {
         if (name == "") break;
 
         std::size_t found_special;
-        //std::cout<<"Blendshape: " << NumberOfBlendshapes << " " <<  BLENDSHAPE_DIRECTORY +  name + ".obj" << std::endl;
         int blnd_type = helper.left_or_right(name, found_special);
 
         if (blnd_type == 1) {
@@ -1734,7 +1733,6 @@ void save_result(){
 
     std::ofstream outfi(output_weights);
     if(!outfi.is_open()) {
-        std::cout << "Can't open  weight filename " <<  output_weights << std::endl;
         return;
     }
 
@@ -1779,7 +1777,6 @@ void save_result_custom(int face_nr, int id){
 
     std::ofstream outfi(output_weights);
     if(!outfi.is_open()) {
-        std::cout << "Can't open  weight filename " <<  output_weights << std::endl;
         return;
     }
 
@@ -1826,7 +1823,6 @@ cv::Mat get_localisation_point_cloud(std::string filename) {
     std::ifstream infi(barycentrics_file);
     if(!infi.is_open()) {
 
-        std::cout << "Cannot open file with barycentric coordinates for the model" << std::endl;
         return cv::Mat();
     }
     cv::Mat localisation_anchors;

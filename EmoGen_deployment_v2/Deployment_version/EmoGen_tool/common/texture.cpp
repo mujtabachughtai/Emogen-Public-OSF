@@ -181,8 +181,7 @@ GLuint loadDDS(const char * imagepath){
 		format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; 
 		break; 
 	default: 
-                std::cout << "here" << std::endl;
-		free(buffer); 
+		free(buffer);
 		return 0; 
 	}
 

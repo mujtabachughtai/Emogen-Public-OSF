@@ -378,7 +378,6 @@ cv::Mat utility::read_barycentrics(std::string filename) {
     std::ifstream barycentrics_infi;
     barycentrics_infi.open(filename);
     if(!barycentrics_infi.is_open()) {
-      std::cout << "Error: Could not find the file with the barycentric coordinates of the collision anchors! Exiting.." << std::endl;
       return barycentrics;
     }
 
@@ -872,7 +871,7 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 	        cloud_bottom_lip2 << "end_header" << std::endl; */
             
 
-                if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
+                //if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
                 
                 cv::Mat A_local;
                

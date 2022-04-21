@@ -80,7 +80,6 @@ int main(int argc, char** argv) {
 	std::string texture_file_as_string(TEXTURE_FILE);
 	std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
 	if (format != "png" && format!= "bmp") {
-		std::cout << "Unknown texture format. Only .png and .bmp can be read " << std::endl;
 		return 1;
 	}
 	
@@ -101,7 +100,6 @@ int main(int argc, char** argv) {
 	std::string info_filename = DATA_DIRECTORY + "data2.dat";
 	std::ifstream rf (info_filename, std::ios::in | std::ios::binary);
 	if(!rf) {
-	  std::cout<< "ERROR: Important data (data2.dat) file is missing. Contact the developer!" << std::endl;
 	  return 1;
 	}
 	rf.read(reinterpret_cast<char*> (info.data), 12 * sizeof(double));
@@ -116,31 +114,25 @@ int main(int argc, char** argv) {
 	Assimp::Importer importer;
 	const aiScene * currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices ); 
 	if (currentScene == NULL) {
-			std::cout << "ERROR: model neutral could not be read" << std::endl;
 			return 1;
 	}
 	aiMesh* mesh = currentScene->mMeshes[0];
 	
 	int numberOfvrtx = mesh->mNumVertices; 
-	std::cout << "number of vertices: " << numberOfvrtx << std::endl;
-	
+
 	cv::Mat init(NumberOfBlendshapes * numberOfvrtx * 3, 1, CV_64F);
 	init.setTo(0.0);
 	init.copyTo(allBlendShapeVertices3Nx1);
 	std::string info_filename2 = DATA_DIRECTORY + "data.dat";
-	std::cout << info_filename2 << std::endl;
 	std::ifstream rf2 (info_filename2, std::ios::in | std::ios::binary);
 	if(!rf2) {
-		std::cout<< "ERROR: Important data file (data1.dat) is missing. Contact the developer!" << std::endl;
 		return 1;
 	}
 	rf2.read(reinterpret_cast<char*> (allBlendShapeVertices3Nx1.data), NumberOfBlendshapes * numberOfvrtx * 3 * sizeof(double));
 	rf2.close();
-	std::cout << "blendshapes loaded" << std::endl;
-	
+
 	glewExperimental = true;
 	if( !glfwInit() ) {
-		std::cout << "Failed to initialize GLFW" << std::endl;
 		return -1;
 	}
 
@@ -155,14 +147,12 @@ int main(int argc, char** argv) {
 	window = glfwCreateWindow(window_width, window_height, "Input Face", NULL, NULL);
 
 	if( window == NULL ) {
-		std::cout << "ERROR: OpenGL window has not initialised" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 
 	glfwMakeContextCurrent(window);          
 	if (glewInit() != GLEW_OK) {
-		std::cout <<"Failed to initialize GLEW" << std::endl;
 		return -1;
 	}
 	
@@ -173,18 +163,14 @@ int main(int argc, char** argv) {
 	Assimp::Exporter exporter;
 	infi_weights.open(weights);
 	for (unsigned int sample_nr = 0; sample_nr < total; ++sample_nr) {
-		std::cout << "rendering sample nr. " << sample_nr << std::endl;
 		cv::Mat_<double>  weights = cv::Mat(1, NumberOfBlendshapes, CV_64F, double(0.0));
 
 		for(int i = 0; i < NumberOfBlendshapes; ++i) { 
 			infi_weights >> weights(i); 
 			infi_weights >> comma;
-			std::cout << weights(i) << " ";
 		}
-		std::cout<< std::endl;
-		currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices ); 
+		currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices );
 		if (currentScene == NULL) {
-			std::cout << "ERROR: model neutral could not be read" << std::endl;
 			return 1;
 		}
 		mesh = currentScene->mMeshes[0];
