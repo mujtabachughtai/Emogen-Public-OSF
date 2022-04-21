@@ -70,7 +70,7 @@ screen_height=1152
 
 # Add this in front for profiling: env CPUPROFILE=run_tool_next_gen.prof
 
-$PWD/EmoGen_tool/build/run_tool \
+env CPUPROFILE=run_tool_start.prof $PWD/EmoGen_tool/build/run_tool \
   $DIRECTORY \
   $orderOfblendshapes_FILE \
   $NEUTRAL_FILE \
