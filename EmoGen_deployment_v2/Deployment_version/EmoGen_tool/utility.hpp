@@ -68,6 +68,6 @@ class utility {
    
      void generate_initialisation(cv::Mat& initialisation, std::vector<int> &vec_happy, std::vector<int> &vec_sad, 
                                      std::vector<int> &vec_angry, std::vector<int> &vec_fearful, std::map<int,int> &left_right_pairs /*, std::vector<int> &face_order*/);
-     void enforce_symmetry(int order_ID, std::vector<int> &which_blendshapes, cv::Mat&initialisation, std::map<int,int> &left_right_pairs, std::ofstream &stats_dump);
+     void enforce_symmetry(int order_ID, std::vector<int> &which_blendshapes, cv::Mat&initialisation, std::map<int,int> &left_right_pairs);
 };
 #endif

@@ -12,7 +12,6 @@ extern std::mt19937 generator_global;
 extern bool random_initialisation, protocol_generated_initialisation;
 extern int init_number;
 extern bool reinit_after_reset;
-extern std::string stats_dump_filename;
 extern std::string OUTPUT_DIRECTORY;
 extern bool include_head_motion, include_eye_pupil_motion, include_eye_lid_motion;
 
@@ -23,11 +22,6 @@ int data::initialise() {
     std::cout << "Face Initialisation" << std::endl;
 
     utility helper = utility();
-
-    std::ofstream stats_dump;
-    stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-    stats_dump << "generation number," << 0 << std::endl;
-    stats_dump.close();
 
     if (protocol_generated_initialisation) {
 
@@ -112,8 +106,6 @@ int data::initialise() {
     }
 
 
-    stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-
     for (int face_nr = 0; face_nr < 10; ++face_nr){
 
 
@@ -145,11 +137,6 @@ int data::initialise() {
 
                         std::cout << "A POSTERIORI HEAD MOTION DISABLING of face in current position nr., ALEX" << face_nr + 1 << std::endl;
 
-                        stats_dump  << "A POSTERIORI HEAD MOTION DISABLING of face in current position nr.," << face_nr + 1 <<
-                                    ",blendshape nr," << head_motion_blnds[blnd_nr] + 1 << ", original weight, "
-                                    << my_data->weights_current_generation[face_nr][head_motion_blnds[blnd_nr]] <<
-                                    ",new weight," << 0.0 <<  std::endl;
-
                         weights_previous_generation[face_nr][head_motion_blnds[blnd_nr]] = 0.0;
                         weights_current_generation[face_nr][head_motion_blnds[blnd_nr]] = 0.0;
                     }
@@ -163,11 +150,6 @@ int data::initialise() {
                 for(int blnd_nr = 0; blnd_nr < eye_pupil_motion_blnds.size(); ++blnd_nr) {
 
                     if (weights_current_generation[face_nr][eye_pupil_motion_blnds[blnd_nr]] != 0.0) {
-
-                        stats_dump  << "A POSTERIORI EYE PUPIL MOTION DISABLING of face in current position nr.," << face_nr + 1 <<
-                                    ",blendshape nr," << eye_pupil_motion_blnds[blnd_nr] + 1 << ", original weight, "
-                                    << my_data->weights_current_generation[face_nr][eye_pupil_motion_blnds[blnd_nr]] <<
-                                    ",new weight," << 0.0 <<  std::endl;
 
                         weights_previous_generation[face_nr][eye_pupil_motion_blnds[blnd_nr]] = 0.0;
                         weights_current_generation[face_nr][eye_pupil_motion_blnds[blnd_nr]] = 0.0;
@@ -184,11 +166,6 @@ int data::initialise() {
 
                     if (weights_current_generation[face_nr][eye_lid_motion_blnds[blnd_nr]] != 0.0) {
 
-                        stats_dump  << "A POSTERIORI EYE LID MOTION DISABLING of face in current position nr.," << face_nr + 1 <<
-                                    ",blendshape nr," << eye_lid_motion_blnds[blnd_nr] + 1 << ", original weight, "
-                                    << my_data->weights_current_generation[face_nr][eye_lid_motion_blnds[blnd_nr]] <<
-                                    ",new weight," << 0.0 <<  std::endl;
-
                         weights_previous_generation[face_nr][eye_lid_motion_blnds[blnd_nr]] = 0.0;
                         weights_current_generation[face_nr][eye_lid_motion_blnds[blnd_nr]] = 0.0;
 
@@ -202,7 +179,6 @@ int data::initialise() {
 
 
     }
-    stats_dump.close();
     session_nr++;
 
     return 0;

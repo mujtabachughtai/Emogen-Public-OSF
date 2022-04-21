@@ -8,7 +8,6 @@
 using ceres::Solver;
 using namespace Eigen;
 
-extern std::string stats_dump_filename;
 extern std::string OUTPUT_DIRECTORY;
 
 void utility::compute_smooth_vertex_normals(aiMesh* mesh){
@@ -44,9 +43,7 @@ void utility::compute_smooth_vertex_normals(aiMesh* mesh){
 void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> &vec_happy, std::vector<int> &vec_sad, 
                                          std::vector<int> &vec_angry, std::vector<int> &vec_fearful, std::map<int,int> &left_right_pairs ) {
 
-   std::ofstream stats_dump;
-   stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-  
+
    cv::Mat init(10, NumberOfBlendshapes, CV_64F);
    init.setTo(0.0);
    init.copyTo(initialisation);
@@ -87,30 +84,26 @@ void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> 
    // happy 1
    std::vector<int> which_blnds;
    int order_ID = order_of_presentation[0];
-   stats_dump << "random novel mutation (init. happy 1) in current position nr.," << order_of_presentation[0] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_happy_1; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_happy(generator_happy);
        which_blnds.push_back(vec_happy[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_happy[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_happy[blnd_subset_ID]) = weight;
    }
   
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    // happy 2
    which_blnds.clear();
    order_ID = order_of_presentation[1];
-   stats_dump << "random novel mutation (init. happy 2) in current position nr.," << order_of_presentation[1] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_happy_2; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_happy(generator_happy);
        which_blnds.push_back(vec_happy[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_happy[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_happy[blnd_subset_ID]) = weight;
 
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    unsigned seed_sad = std::chrono::system_clock::now().time_since_epoch().count();
    std::mt19937 generator_sad(seed_sad); 
@@ -119,29 +112,25 @@ void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> 
    // sad 1
    which_blnds.clear();
    order_ID = order_of_presentation[2];
-   stats_dump << "random novel mutation (init. sad 1) in current position nr.," << order_of_presentation[2] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_sad_1; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_sad(generator_sad);
        which_blnds.push_back(vec_sad[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_sad[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_sad[blnd_subset_ID]) = weight;
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    // sad 2
    which_blnds.clear();
    order_ID = order_of_presentation[3];
-   stats_dump << "random novel mutation (init. sad 2) in current position nr.," << order_of_presentation[3] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_sad_2; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_sad(generator_sad);
        which_blnds.push_back(vec_sad[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_sad[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_sad[blnd_subset_ID]) = weight;
 
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    unsigned seed_angry = std::chrono::system_clock::now().time_since_epoch().count();
    std::mt19937 generator_angry(seed_angry); 
@@ -150,28 +139,24 @@ void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> 
    // angry 1
    which_blnds.clear();
    order_ID = order_of_presentation[4];
-   stats_dump << "random novel mutation (init. angry 1) in current position nr.," << order_of_presentation[4] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_angry_1; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_angry(generator_angry);
        which_blnds.push_back(vec_angry[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_angry[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_angry[blnd_subset_ID]) = weight;
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    // angry 2
    which_blnds.clear();
    order_ID = order_of_presentation[5];
-   stats_dump << "random novel mutation (init. angry 2) in current position nr.," << order_of_presentation[5] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_angry_2; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_angry(generator_angry);
        which_blnds.push_back(vec_angry[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_angry[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_angry[blnd_subset_ID]) = weight;
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    unsigned seed_fearful = std::chrono::system_clock::now().time_since_epoch().count();
    std::mt19937 generator_fearful(seed_fearful); 
@@ -180,28 +165,24 @@ void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> 
    // fearful 1
    which_blnds.clear();
    order_ID = order_of_presentation[6];
-   stats_dump << "random novel mutation (init. fearful 1) in current position nr.," << order_of_presentation[6] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_fearful_1; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_fearful(generator_fearful);
        which_blnds.push_back(vec_fearful[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_fearful[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_fearful[blnd_subset_ID]) = weight;
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
    // fearful 2
    which_blnds.clear();
    order_ID = order_of_presentation[7];
-   stats_dump << "random novel mutation (init. fearful 2) in current position nr.," << order_of_presentation[7] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_fearful_2; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_fearful(generator_fearful);
        which_blnds.push_back(vec_fearful[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << vec_fearful[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, vec_fearful[blnd_subset_ID]) = weight;
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
    
    // freestyle
    unsigned seed_freestyle = std::chrono::system_clock::now().time_since_epoch().count();
@@ -210,23 +191,19 @@ void utility::generate_initialisation(cv::Mat& initialisation, std::vector<int> 
 
    which_blnds.clear();
    order_ID = order_of_presentation[8];
-   stats_dump << "random novel mutation (init. unconstrained) in current position nr.," << order_of_presentation[8] + 1 << std::endl;
    for(unsigned int blnd_nr = 0; blnd_nr < number_blnd_all; ++blnd_nr) {
        double weight = distribution_2(generator_2);
        int blnd_subset_ID = distribution_freestyle(generator_freestyle);
        which_blnds.push_back(sample_list[blnd_subset_ID]);
-       stats_dump <<"blendshape nr.," << sample_list[blnd_subset_ID] + 1 << ", new weight:," << weight << std::endl;
        initialisation.at<double>(order_ID, sample_list[blnd_subset_ID]) = weight;
 
    }
-   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs, stats_dump);
+   enforce_symmetry(order_ID, which_blnds, initialisation, left_right_pairs);
 
-   stats_dump.close();
-    
 
 }
 
-void utility::enforce_symmetry(int order_ID, std::vector<int> &which_blendshapes, cv::Mat&initialisation, std::map<int,int> &left_right_pairs, std::ofstream &stats_dump) {
+void utility::enforce_symmetry(int order_ID, std::vector<int> &which_blendshapes, cv::Mat&initialisation, std::map<int,int> &left_right_pairs) {
 
 	for (unsigned int wch_bld_nr = 0; wch_bld_nr < which_blendshapes.size(); ++wch_bld_nr) {
 
@@ -234,16 +211,12 @@ void utility::enforce_symmetry(int order_ID, std::vector<int> &which_blendshapes
 
                   if ( it->first == which_blendshapes[wch_bld_nr] ) {
 
-                      stats_dump <<"enforcing symmetry blendshape nr.," << it->second + 1;
                       initialisation.at<double>(order_ID, it->second) =  initialisation.at<double>(order_ID, which_blendshapes[wch_bld_nr]);
-                      stats_dump <<", new weight: ," << initialisation.at<double>(order_ID, it->second) << std::endl;
                       break;
 
                   } else if (it->second == which_blendshapes[wch_bld_nr] ) {
 
-                      stats_dump <<"enforcing symmetry blendshape nr.," << it->first + 1;
                       initialisation.at<double>(order_ID, it->first) = initialisation.at<double>(order_ID, which_blendshapes[wch_bld_nr]);
-                      stats_dump <<", new weight: ," << initialisation.at<double>(order_ID, it->first) << std::endl;
                       break;
 
                  }

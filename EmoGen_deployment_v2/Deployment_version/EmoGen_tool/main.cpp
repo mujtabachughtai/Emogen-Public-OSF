@@ -136,9 +136,6 @@ bool doScale = false;
 
 cv::Mat record;
 
-std::ofstream stats_dump;
-std::string stats_dump_filename;
-
 std::ofstream monster_log;
 std::string monster_log_filename;
 
@@ -234,7 +231,6 @@ int main(int argc, char** argv) {
 
     EMOTION_TYPE = argv[5];
     TARGET_EMOTION = EMOTION_TYPE.c_str();
-    stats_dump_filename = OUTPUT_DIRECTORY  + "stats_dump_" + TARGET_EMOTION + ".csv";
 
     std::string delimiter = "_";
 
@@ -327,12 +323,6 @@ int main(int argc, char** argv) {
         sample_list.push_back(nr);
 
     }
-
-
-
-    stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::trunc);
-    stats_dump <<"session identifier," << EMOTION_TYPE << "," << std::to_string(my_data->session_nr + 1) << std::endl;
-    stats_dump.close();
 
 
     int failed = my_data -> initialise(); //NOTE: here previous weights and current weights are set fir the first time alex
@@ -607,10 +597,6 @@ int main(int argc, char** argv) {
         //Then start generating next gen based on the user choices
 
         std::cout << "GENERATION NUMBER " << GenNr_counter + 1 << std::endl;
-
-        stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-        stats_dump << "generation number," << GenNr_counter + 1 << std::endl;
-        stats_dump.close();
 
         // Generate new iteration
         generateNextGen(); //NOTE: this will generate new weights too
@@ -1139,12 +1125,6 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
                         int blnd_nr = my_data -> puffs[puff_blnd_nr];
                         if ( my_data->weights_current_generation[choice_nr][blnd_nr] != 0.0 ) {
 
-                            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-
-                            stats_dump << "A POSTERIORI GEOMETRY CORRECTION of face in current position nr.,"  << choice_nr + 1 <<
-                                       ",blendshape nr," << blnd_nr + 1  << ", original weight, " << my_data->weights_current_generation[choice_nr][blnd_nr] <<
-                                       ",new weight," << 0.0 <<  std::endl;
-                            stats_dump.close();
                             my_data->weights_current_generation[choice_nr][blnd_nr] = 0.0;
                         }
 
@@ -1344,12 +1324,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
                         int blnd_nr = my_data -> puffs[puff_blnd_nr];
                         if ( my_data->weights_current_generation[choice_nr][blnd_nr] != 0.0 ) {
 
-                            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-
-                            stats_dump << "A POSTERIORI GEOMETRY CORRECTION of face in current position nr.,"  << choice_nr + 1 <<
-                                       ",blendshape nr," << blnd_nr + 1  << ", original weight, " << my_data->weights_current_generation[choice_nr][blnd_nr] <<
-                                       ",new weight," << 0.0 <<  std::endl;
-                            stats_dump.close();
                             my_data->weights_current_generation[choice_nr][blnd_nr] = 0.0;
                         }
 
@@ -1506,12 +1480,6 @@ void generateNextGen() {
                    &my_data->weights_previous_generation[my_data->chosen_rows[0]][0],
                    NumberOfBlendshapes * sizeof(double));
 
-            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-            stats_dump << "elite face in current position nr,"  << order_of_presentation[0] + 1 <<
-                       ",copied from previous position nr,"   << my_data->chosen_rows[0] + 1  << std::endl;
-            stats_dump << std::endl;
-            stats_dump.close();
-
             my_data -> copied_exactly_IDs.push_back(order_of_presentation[0]);
             std::cout << "updated nr: " << order_of_presentation[0] + 1 << std::endl;
 
@@ -1537,31 +1505,18 @@ void generateNextGen() {
                 }
             }
 
-            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-            stats_dump << "average of all selected in current position nr.,"  << order_of_presentation[1] + 1 << std::endl;
-
-
             // enforce symmetry
             for (std::map<int, int>::iterator it = my_data->left_right_pairs.begin(); it != my_data->left_right_pairs.end(); ++it) {
                 if (average[it ->first] != average[it -> second]){
 
                     double lft_rgt_average = 0.5 * ( average[it ->first] + average[it -> second] );
 
-                    stats_dump << "enforcing symmetry blendshapes nrs. ," << it ->first + 1 << " " << it -> second + 1 << " "
-                               << " original weights: "<< average[it ->first] << " " << average[it -> second];
-
                     average[it ->first] = lft_rgt_average;
                     average[it ->second] = lft_rgt_average;
-
-                    stats_dump << " new shared weight: "<< lft_rgt_average << std::endl;
-
-
 
                 }
 
             }
-            stats_dump << std::endl;
-            stats_dump.close();
 
             std::transform(average.begin(), average.end(), average.begin(), std::bind(std::multiplies<double>(), std::placeholders::_1,
                                                                                       1.0 / ( my_data->chosen_rows.size()) ));
@@ -1569,9 +1524,6 @@ void generateNextGen() {
             memcpy(&my_data->weights_current_generation[order_of_presentation[1]][0],
                    &average[0],
                    NumberOfBlendshapes * sizeof(double));
-
-
-            stats_dump << std::endl;
 
             std::cout << "updated nr: " << order_of_presentation[1] + 1 << std::endl;
 
@@ -1591,13 +1543,6 @@ void generateNextGen() {
                        &my_data->weights_previous_generation[order_of_presentation[2]][0],
                        NumberOfBlendshapes * sizeof(double));
 
-                stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-                stats_dump << "nothing to average with copy, into current position nr.," << order_of_presentation[2] + 1
-                           << ", face from previous position nr., " << order_of_presentation[2] + 1 << std::endl;
-
-                stats_dump << std::endl;
-                stats_dump.close();
-
 
                 std::cout << "updated nr: " << order_of_presentation[2] + 1 << std::endl;
 
@@ -1609,12 +1554,6 @@ void generateNextGen() {
 
                 chosen_nr = distribution_1(generator_1);
                 while(chosen_nr == 0) chosen_nr = distribution_1(generator_1);
-                stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-                stats_dump << "average in current position nr.," << order_of_presentation[2] + 1
-                           << ", of elite face and the selected from previous position nr., "  << my_data->chosen_rows[chosen_nr] + 1 << std::endl;
-
-
-
 
             }
 
@@ -1638,18 +1577,13 @@ void generateNextGen() {
 
                     double lft_rgt_average = 0.5 * ( average[it ->first] + average[it -> second] );
 
-                    stats_dump << "enforcing symmetry blendshapes nrs. , " << it ->first + 1 << " " << it -> second + 1 << " "
-                               << " original weights: "<< average[it ->first] << " " << average[it -> second];
-
                     average[it ->first] = lft_rgt_average;
                     average[it ->second] = lft_rgt_average;
 
-                    stats_dump << " new shared weight: "<< lft_rgt_average << std::endl;
                 }
 
             }
-            stats_dump << std::endl;
-            stats_dump.close();
+
             std::transform(average.begin(), average.end(), average.begin(), std::bind(std::multiplies<double>(), std::placeholders::_1, 0.5 ));
 
             memcpy(&my_data->weights_current_generation[order_of_presentation[2]][0],
@@ -1669,11 +1603,6 @@ void generateNextGen() {
                 while(chosen_nr2 == chosen_nr1) chosen_nr2 = distribution_1(generator_1);
             }
 
-            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-            stats_dump << "cross-breeding in current position nr.," << order_of_presentation[face_nr] + 1
-                       << ", of parents in previous positions nr.," << my_data->chosen_rows[chosen_nr1] + 1 << "," << my_data->chosen_rows[chosen_nr2] + 1 << std::endl;
-
-
             std::vector<double> new_face;
             new_face.resize(NumberOfBlendshapes);
             memcpy(&new_face[0], &my_data->weights_previous_generation[my_data->chosen_rows[chosen_nr1]][0], new_face.size() * sizeof(double));
@@ -1683,9 +1612,6 @@ void generateNextGen() {
             int numberOfchanges = 2;
 
             std::vector<int> which_blendshapes;
-
-
-            stats_dump << "post cross-breeding mutation in current position nr.," << order_of_presentation[face_nr] + 1 << std::endl;
 
             for (int times = 0; times < numberOfchanges; ++times) which_blendshapes.push_back(sample_list[distribution_2(generator_2)]);
 
@@ -1698,30 +1624,19 @@ void generateNextGen() {
 
                     if ( it->first == which_blendshapes[wch_bld_nr] ) {
 
-                        stats_dump <<"enforcing symmetry blendshape nr.," << it->second + 1 <<", original weight: ," << new_face[it->second];
-
                         new_face[it->second] = new_face[which_blendshapes[wch_bld_nr]];
 
-                        stats_dump <<", new weight: ," << new_face[it->second] << std::endl;
                         break;
 
                     } else if (it->second == which_blendshapes[wch_bld_nr] ) {
 
-                        stats_dump <<"enforcing symmetry blendshape nr.," << it->first + 1 <<", original weight: ," << new_face[it->first];
-
                         new_face[it->first] = new_face[which_blendshapes[wch_bld_nr]];
-
-                        stats_dump <<", new weight: ," << new_face[it->first] << std::endl;
-
 
                         break;
                     }
                 }
             }
 
-
-            stats_dump << std::endl;
-            stats_dump.close();
             memcpy(&my_data->weights_current_generation[order_of_presentation[face_nr]][0],
                    &new_face[0],
                    NumberOfBlendshapes * sizeof(double));
@@ -1736,10 +1651,6 @@ void generateNextGen() {
 
             for (int times = 0; times < numberOfchanges; ++times) which_blendshapes.push_back(sample_list[distribution_2(generator_2)]);
 
-
-            stats_dump.open(stats_dump_filename, std::ofstream::out | std::ofstream::app);
-            stats_dump << "random novel mutation in current position nr.," << order_of_presentation[face_nr] + 1 << std::endl;
-
             std::vector<double> random_face = randBlendshapes(1.0, which_blendshapes);
 
             // enforce symmetry
@@ -1749,21 +1660,13 @@ void generateNextGen() {
 
                     if ( it->first == which_blendshapes[wch_bld_nr] ) {
 
-                        stats_dump <<"enforcing symmetry blendshape nr.," << it->second + 1;
-
                         random_face[it->second] = random_face[which_blendshapes[wch_bld_nr]];
-
-                        stats_dump <<", new weight: ," << random_face[it->second] << std::endl;
 
                         break;
 
                     } else if (it->second == which_blendshapes[wch_bld_nr] ) {
 
-                        stats_dump <<"enforcing symmetry blendshape nr.," << it->first + 1;
-
                         random_face[it->first] = random_face[which_blendshapes[wch_bld_nr]];
-
-                        stats_dump <<", new weight: ," << random_face[it->first] << std::endl;
 
                         break;
 
@@ -1771,10 +1674,6 @@ void generateNextGen() {
 
                 }
             }
-
-
-            stats_dump << std::endl;
-            stats_dump.close();
 
 
             memcpy(&my_data->weights_current_generation[order_of_presentation[face_nr]][0],
@@ -1811,47 +1710,34 @@ void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
             }
         }
         if (is_corrective) {
-            stats_dump <<"blendshape nr.," << blnd_nr + 1 << ", corrective" << std::endl;
             continue;
         }
 
         double flip = distribution(generator);
 
-        stats_dump <<"blendshape nr.," << blnd_nr + 1 << ", flip:, " << flip;
-
 
         if (flip < 0.5) {
 
-            stats_dump <<", yes" <<", original weight: ," << face_to_cross_breed[blnd_nr];
-
             face_to_cross_breed[blnd_nr] = my_data->weights_previous_generation[my_data->chosen_rows[chosen_nr2]][blnd_nr];
-
-            stats_dump <<", new weight: ," << face_to_cross_breed[blnd_nr] << std::endl;
 
             for (std::map<int, int>::iterator it = my_data->left_right_pairs.begin(); it != my_data->left_right_pairs.end(); ++it) {
 
                 if ( ( it->first == blnd_nr ) && ( face_to_cross_breed[it->second] != face_to_cross_breed[blnd_nr] ) ) {
 
-                    stats_dump <<"enforcing symmetry blendshape nr.," << it->second + 1 << ",,,, original weight: ," << face_to_cross_breed[it->second];
-
                     face_to_cross_breed[it->second] = face_to_cross_breed[blnd_nr];
 
-                    stats_dump << ", new weight: ," << face_to_cross_breed[it->second] << std::endl;
                     break;
 
                 } else if ( ( it->second == blnd_nr ) && ( face_to_cross_breed[it->first] != face_to_cross_breed[blnd_nr] ) ) {
 
-                    stats_dump <<"enforcing symmetry blendshape nr.," << it->first + 1 <<",,,, original weight: ," << face_to_cross_breed[it->first];
-
                     face_to_cross_breed[it->first] = face_to_cross_breed[blnd_nr];
 
-                    stats_dump << ", new weight: ," << face_to_cross_breed[it->first] << std::endl;
                     break;
 
                 }
 
             }
-        } else stats_dump <<", no" << std::endl;
+        }
     }
 
 
@@ -1868,9 +1754,7 @@ void mutateBlendshapes(std::vector<double> &face_to_mutate, double minMR, double
 
     for (int blnd_nr=0; blnd_nr < which_blnd_nrs.size(); ++blnd_nr) {
 
-        stats_dump << "blendshape nr.," << which_blnd_nrs[blnd_nr] + 1 << ", original weight:," << face_to_mutate[which_blnd_nrs[blnd_nr]];
         face_to_mutate[which_blnd_nrs[blnd_nr]] =  distribution(generator);
-        stats_dump << ", new weight:," << face_to_mutate[which_blnd_nrs[blnd_nr]] << std::endl;
 
     }
 
@@ -1896,7 +1780,6 @@ std::vector<double> randBlendshapes(double MR, std::vector<int>&which_blnd_nrs) 
     for (int blnd_nr=0; blnd_nr < which_blnd_nrs.size(); ++blnd_nr) {
 
         new_face[which_blnd_nrs[blnd_nr]] =  distribution(generator);
-        stats_dump <<"blendshape nr.," << which_blnd_nrs[blnd_nr] + 1 << ", new weight:," << new_face[which_blnd_nrs[blnd_nr]] << std::endl;
 
     }
 
