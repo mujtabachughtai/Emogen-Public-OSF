@@ -1,7 +1,7 @@
 # EmoGen tool configuration file
 
-#prof file
-proffile=${26}
+##prof file
+#proffile=${26}
 
 # SELECT MODEL: MALE OR FEMALE
 model=${25}
@@ -34,7 +34,7 @@ numberofblendshapes=150
 # MAKE YOUR PARAMETER SELECTIONS BELOW
 # ******************************************************
 # PLESE NOTE: NO SPACES BETWEEN THE EQUAL SIGN (=) AND PARAMETER NAME/PARAMETER VALUE
-maximum_number_of_generations=10
+maximum_number_of_generations=${26}
 
 OUTPUT_FOLDER=$PWD/user_output/
 
@@ -72,8 +72,9 @@ screen_height=1152
 # ******************************************************
 
 # Add this in front for profiling: env CPUPROFILE=run_tool_next_gen.prof
+# or more generic env CPUPROFILE=${26}, or whatever param number
 
-env CPUPROFILE=${26} $PWD/EmoGen_tool/build/run_tool \
+$PWD/EmoGen_tool/build/run_tool \
   $DIRECTORY \
   $orderOfblendshapes_FILE \
   $NEUTRAL_FILE \
