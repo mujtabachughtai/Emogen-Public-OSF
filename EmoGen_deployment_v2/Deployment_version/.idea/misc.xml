@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="3140" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/EmoGen_tool/data.cpp" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="3452" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/run_tool.sh" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/web_user_log.txt" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="33116" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/EmoGen_tool/utility.cpp" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="7055" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/EmoGen_tool/main.cpp" />
+        </OpenedFileInfo>
+      </list>
+    </option>
+  </component>
+</project>

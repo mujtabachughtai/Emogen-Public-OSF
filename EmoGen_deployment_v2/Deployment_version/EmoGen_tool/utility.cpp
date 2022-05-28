@@ -871,7 +871,7 @@ void utility::correct_lip_and_teeth_collisions(aiMesh* mesh, int choice_nr, bool
 	        cloud_bottom_lip2 << "end_header" << std::endl; */
             
 
-                //if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
+                if (!collision_lips &&  !collision_teeth) {std::cout << "No collisions detected" << std::endl; return;}
                 
                 cv::Mat A_local;
                

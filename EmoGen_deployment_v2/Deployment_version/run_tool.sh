@@ -23,7 +23,7 @@ orderOfblendshapes_FILE=$PWD/data/shapes.txt
 SHADER_DIRECTORY=$PWD/EmoGen_tool/common/
 barycentrics_new_model=$PWD/data/target_points.txt
 # The file below should be created before from Rails
-initialisation_new_model="/home/emogen_all/emoGen-web/emogen_rails/public/results/${USER_DIR}/initialisation.csv"
+initialisation_new_model="/home/ar2056/emogen_all/emoGen-web/emogen_rails/public/results/${USER_DIR}/initialisation.csv"
 neutral_in_updated_position=$PWD/data/$model"/new_model_neutral.obj"                                        
 collision_anchors=$PWD/data/collision_anchors_upper_lip.txt                 
 teeth_collision_anchors=$PWD/data/UpperTeeth_polygons.txt              

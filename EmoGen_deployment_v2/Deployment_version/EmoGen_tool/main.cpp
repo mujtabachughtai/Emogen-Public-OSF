@@ -88,6 +88,7 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
 
 std::string BLENDSHAPE_DIRECTORY;
 std::string USER_DIRECTORY;
+std::string BASE_DIRECTORY("/home/ar2056/");
 std::string orderOfblendshapes_FILE;
 std::string Neutral_FILE;
 std::string SHADER_DIRECTORY;
@@ -245,7 +246,10 @@ int main(int argc, char** argv) {
 
         SELECTION_INSTRUCTIONS = "<b> Please select min." + std::to_string(min_num_of_sel) + " and max. " + std::to_string(max_num_of_sel) + " faces </b>";
     }
+
+    std::cout << "maximum_number_of_generations 0" << std::endl;
     maximum_number_of_generations=atoi(argv[7]);
+    std::cout << "maximum_number_of_generations 1" << std::endl;
 
     const char * TEXTURE_FILE = argv[10];
     std::string texture_file_as_string(TEXTURE_FILE);
@@ -699,7 +703,7 @@ int main(int argc, char** argv) {
     glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
     cv::flip(res, res, 0);
     //return base64 to client
-    SaveImage(res, "/home/emogen_all/emoGen-web/emogen_rails/public/results/" + USER_DIRECTORY + "/result.png");
+    SaveImage(res, BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + USER_DIRECTORY + "/result.png");
 
     if (format == "png") SOIL_free_image_data(image);
     return 0;
@@ -1947,12 +1951,12 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
 
 
     std::ofstream myfile_gen;
-    myfile_gen.open("/home/emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/saved_generation.csv");
+    myfile_gen.open(BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/saved_generation.csv");
     myfile_gen << generation;
     myfile_gen.close();
 
     std::ofstream myfile;
-    myfile.open("/home/emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
+    myfile.open(BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
     for(int i = 0; i < rows; i++){
         for(int k = 0; k < columns; k++) {
             if(k < 9) {
