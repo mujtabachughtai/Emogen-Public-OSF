@@ -88,7 +88,7 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
 
 std::string BLENDSHAPE_DIRECTORY;
 std::string USER_DIRECTORY;
-std::string BASE_DIRECTORY("/home/ar2056/");
+std::string WEB_BASE_DIRECTORY("/home/deploy/Emogen-Rails/shared/public/");
 std::string orderOfblendshapes_FILE;
 std::string Neutral_FILE;
 std::string SHADER_DIRECTORY;
@@ -703,7 +703,7 @@ int main(int argc, char** argv) {
     glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
     cv::flip(res, res, 0);
     //return base64 to client
-    SaveImage(res, BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + USER_DIRECTORY + "/result.png");
+    SaveImage(res, WEB_BASE_DIRECTORY + USER_DIRECTORY + "/result.png");
 
     if (format == "png") SOIL_free_image_data(image);
     return 0;
@@ -1951,12 +1951,12 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
 
 
     std::ofstream myfile_gen;
-    myfile_gen.open(BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/saved_generation.csv");
+    myfile_gen.open(WEB_BASE_DIRECTORY + user_dir + "/saved_generation.csv");
     myfile_gen << generation;
     myfile_gen.close();
 
     std::ofstream myfile;
-    myfile.open(BASE_DIRECTORY + "emogen_all/emoGen-web/emogen_rails/public/results/" + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
+    myfile.open(WEB_BASE_DIRECTORY + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
     for(int i = 0; i < rows; i++){
         for(int k = 0; k < columns; k++) {
             if(k < 9) {
