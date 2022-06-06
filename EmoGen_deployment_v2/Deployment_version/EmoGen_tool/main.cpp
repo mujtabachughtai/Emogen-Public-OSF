@@ -88,7 +88,7 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
 
 std::string BLENDSHAPE_DIRECTORY;
 std::string USER_DIRECTORY;
-std::string WEB_BASE_DIRECTORY("/home/deploy/Emogen-Rails/shared/public/");
+std::string WEB_BASE_DIRECTORY("/home/emogen/emogenWeb/shared/public/");
 std::string orderOfblendshapes_FILE;
 std::string Neutral_FILE;
 std::string SHADER_DIRECTORY;
