@@ -555,8 +555,8 @@ int main(int argc, char** argv) {
 
         //Note: At this point no pic is generated
 
-        std::cout << "GenNr_counter (before): " + GenNr_counter << std::endl;
-        std::cout << "maximum_number_of_generations: " + maximum_number_of_generations << std::endl;
+        std::cout << "GenNr_counter (before): " << GenNr_counter << std::endl;
+        std::cout << "maximum_number_of_generations: " << maximum_number_of_generations << std::endl;
 
         if (GenNr_counter == maximum_number_of_generations ){
             // save_result();
@@ -591,7 +591,7 @@ int main(int argc, char** argv) {
 
         GenNr_counter++;
 
-        std::cout << "GenNr_counter (After): " + GenNr_counter << std::endl;
+        std::cout << "GenNr_counter (After): " << GenNr_counter << std::endl;
 
         my_data ->prepare_for_next_generation();
 
