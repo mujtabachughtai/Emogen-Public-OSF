@@ -247,9 +247,7 @@ int main(int argc, char** argv) {
         SELECTION_INSTRUCTIONS = "<b> Please select min." + std::to_string(min_num_of_sel) + " and max. " + std::to_string(max_num_of_sel) + " faces </b>";
     }
 
-    std::cout << "maximum_number_of_generations 0" << std::endl;
     maximum_number_of_generations=atoi(argv[7]);
-    std::cout << "maximum_number_of_generations 1" << std::endl;
 
     const char * TEXTURE_FILE = argv[10];
     std::string texture_file_as_string(TEXTURE_FILE);
@@ -316,7 +314,7 @@ int main(int argc, char** argv) {
     }
 
 
-    int failed = my_data -> initialise(); //NOTE: here previous weights and current weights are set fir the first time alex
+    int failed = my_data -> initialise(); //NOTE: here previous weights and current weights are set for the first time alex
     if (failed == 1) return 1;
 
 
@@ -557,6 +555,9 @@ int main(int argc, char** argv) {
 
         //Note: At this point no pic is generated
 
+        std::cout << "GenNr_counter (before): " + GenNr_counter std::endl;
+        std::cout << "maximum_number_of_generations: " + maximum_number_of_generations std::endl;
+
         if (GenNr_counter == maximum_number_of_generations ){
             // save_result();
             my_data->chosen_rows.clear();
@@ -589,6 +590,8 @@ int main(int argc, char** argv) {
 
 
         GenNr_counter++;
+
+        std::cout << "GenNr_counter (After): " + GenNr_counter std::endl;
 
         my_data ->prepare_for_next_generation();
 
@@ -1950,10 +1953,10 @@ void save_custom_session(std::vector<std::vector<double>> weights, int generatio
     int columns = 10;
 
 
-    std::ofstream myfile_gen;
-    myfile_gen.open(WEB_BASE_DIRECTORY + user_dir + "/saved_generation.csv");
-    myfile_gen << generation;
-    myfile_gen.close();
+//    std::ofstream myfile_gen;
+//    myfile_gen.open(WEB_BASE_DIRECTORY + user_dir + "/saved_generation.csv");
+//    myfile_gen << generation;
+//    myfile_gen.close();
 
     std::ofstream myfile;
     myfile.open(WEB_BASE_DIRECTORY + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
