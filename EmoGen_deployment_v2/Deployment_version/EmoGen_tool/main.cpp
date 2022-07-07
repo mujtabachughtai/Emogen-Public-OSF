@@ -47,7 +47,6 @@
 #include "common/texture.hpp"
 
 #include <gtk/gtk.h>
-#include "box_multiwidget.hpp"
 
 #include "data.hpp"
 #include "utility.hpp"
