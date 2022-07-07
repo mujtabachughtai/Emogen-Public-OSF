@@ -20,7 +20,7 @@ pkg_check_modules (GTKMM REQUIRED gtkmm-3.0)
 add_definitions (${GTK3_CFLAGS_OTHER} ${GLIBMM_CFLAGS} ${GTKMM_CFLAGS})
 include_directories(${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS})
 link_directories (${GTK3_LIBRARY_DIRS}  ${GLIBMM_LIBRARY_DIRS} ${GTKMM_LIBRARY_DIRS})
-add_executable(run_tool main.cpp data.cpp utility.cpp common/shader.cpp common/objloader.cpp common/controls.cpp common/text2D.cpp common/texture.cpp box_multiwidget.cpp CorrectiveWeightsAnalytic.cpp)
+add_executable(run_tool main.cpp data.cpp utility.cpp common/shader.cpp common/objloader.cpp common/controls.cpp common/text2D.cpp common/texture.cpp CorrectiveWeightsAnalytic.cpp)
 target_link_libraries(run_tool glfw EGL ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} /usr/lib/libSOIL.so assimp ${GTK3_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTKMM_LIBRARIES} ${CERES_LIBRARIES} "-Wl,--no-as-needed,-lprofiler,--as-needed")
 
 
