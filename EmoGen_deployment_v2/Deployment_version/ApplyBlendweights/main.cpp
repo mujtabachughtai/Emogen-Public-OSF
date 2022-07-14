@@ -136,6 +136,93 @@ int main(int argc, char** argv) {
 	rf2.read(reinterpret_cast<char*> (allBlendShapeVertices3Nx1.data), NumberOfBlendshapes * numberOfvrtx * 3 * sizeof(double));
 	rf2.close();
 
+    //EGL code starts here - alex
+    EGLDeviceEXT eglDevs[10];
+    EGLint numDevices;
+
+    PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
+    if( eglQueryDevicesEXT == NULL )
+    {
+        exit(0);
+    }
+
+    PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
+    PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
+
+    eglQueryDevicesEXT(10, eglDevs, &numDevices);
+
+    int dcToUse = 0;
+    for( unsigned dc = 0; dc < numDevices; ++dc )
+    {
+        std::string devName( "N/A" );
+        std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
+
+        if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
+        {
+            dcToUse = dc;
+        }
+    }
+
+    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+    eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
+
+    EGLint major, minor;
+    eglInitialize(eglDisplay, &major, &minor);
+
+    EGLint configAttribs[] =
+            {
+                    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+                    EGL_BLUE_SIZE, 8,
+                    EGL_GREEN_SIZE, 8,
+                    EGL_RED_SIZE, 8,
+                    EGL_DEPTH_SIZE, 24,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+                    EGL_NONE
+            };
+
+    EGLint numConfigs;
+    EGLConfig eglCfg;
+    eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
+
+    EGLint pbufferAttribs[] =
+            {
+                    EGL_WIDTH, window_width,
+                    EGL_HEIGHT, window_height,
+                    EGL_NONE
+            };
+
+    EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
+    if( eglSurface == EGL_NO_SURFACE )
+    {
+        exit(0);
+    }
+
+    eglBindAPI(EGL_OPENGL_API);
+
+    EGLint ctxAttribs[] =
+            {
+                    EGL_CONTEXT_MAJOR_VERSION, 4,
+                    EGL_CONTEXT_MINOR_VERSION, 1
+            };
+
+    eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
+    if( eglContext == NULL )
+    {
+        exit(0);
+    }
+
+    eglSwapInterval( eglDisplay, 0 );
+
+    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+    // we should be able to ask OpenGL about which version we've got...
+    GLint glMajor, glMinor;
+    glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
+    glGetIntegerv(GL_MINOR_VERSION, &glMinor);
+
+    // EGL Code ends here - Alex
+
 //	glewExperimental = true;
 //	if( !glfwInit() ) {
 //		return -1;
@@ -168,95 +255,6 @@ int main(int argc, char** argv) {
 	Assimp::Exporter exporter;
 	infi_weights.open(weights);
 	for (unsigned int sample_nr = 0; sample_nr < total; ++sample_nr) {
-
-        //EGL code starts here - alex
-        EGLDeviceEXT eglDevs[10];
-        EGLint numDevices;
-
-        PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
-        if( eglQueryDevicesEXT == NULL )
-        {
-            exit(0);
-        }
-
-        PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
-        PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
-
-        eglQueryDevicesEXT(10, eglDevs, &numDevices);
-
-        int dcToUse = 0;
-        for( unsigned dc = 0; dc < numDevices; ++dc )
-        {
-            std::string devName( "N/A" );
-            std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
-
-            if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
-            {
-                dcToUse = dc;
-            }
-        }
-
-        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
-
-        eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
-
-        EGLint major, minor;
-        eglInitialize(eglDisplay, &major, &minor);
-
-        EGLint configAttribs[] =
-                {
-                        EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-                        EGL_BLUE_SIZE, 8,
-                        EGL_GREEN_SIZE, 8,
-                        EGL_RED_SIZE, 8,
-                        EGL_DEPTH_SIZE, 24,
-                        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-                        EGL_NONE
-                };
-
-        EGLint numConfigs;
-        EGLConfig eglCfg;
-        eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
-
-        EGLint pbufferAttribs[] =
-                {
-                        EGL_WIDTH, window_width,
-                        EGL_HEIGHT, window_height,
-                        EGL_NONE
-                };
-
-        EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
-        if( eglSurface == EGL_NO_SURFACE )
-        {
-            exit(0);
-        }
-
-        eglBindAPI(EGL_OPENGL_API);
-
-        EGLint ctxAttribs[] =
-                {
-                        EGL_CONTEXT_MAJOR_VERSION, 4,
-                        EGL_CONTEXT_MINOR_VERSION, 1
-                };
-
-        eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
-        if( eglContext == NULL )
-        {
-            exit(0);
-        }
-
-        eglSwapInterval( eglDisplay, 0 );
-
-        eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-
-        // we should be able to ask OpenGL about which version we've got...
-        GLint glMajor, glMinor;
-        glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
-        glGetIntegerv(GL_MINOR_VERSION, &glMinor);
-
-        // EGL Code ends here - Alex
-        std::cout << " Success " << std::endl;
-        exit(0);
 
 		cv::Mat_<double>  weights = cv::Mat(1, NumberOfBlendshapes, CV_64F, double(0.0));
 
