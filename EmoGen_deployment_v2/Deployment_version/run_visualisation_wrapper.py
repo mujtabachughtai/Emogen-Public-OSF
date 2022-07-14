@@ -9,4 +9,4 @@ csv_data = genfromtxt(csv_file, delimiter=',')
 
 np.savetxt(save_dir, np.transpose(csv_data), delimiter=",")
 
-subprocess.run(["run_visualisation.sh"])
+subprocess.run(["/home/emogen/emoGen_sandbox/EmoGen_deployment_v2/Deployment_version/run_visualisation.sh"])
