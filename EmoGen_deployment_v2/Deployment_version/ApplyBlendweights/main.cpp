@@ -31,7 +31,10 @@
 #include <string> 
 #include <stdlib.h>   
 
-#include <SOIL/SOIL.h>  
+#include <SOIL/SOIL.h>
+
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 
 cv::Mat_<double> allBlendShapeVertices3Nx1;  
 std::string DATA_DIRECTORY;
@@ -43,7 +46,11 @@ std::string image_FILE;
 std::string SHADER_DIRECTORY;
 int NumberOfBlendshapes;
 
-GLFWwindow* window; 
+EGLDisplay eglDisplay;
+EGLSurface eglSurface;
+EGLContext eglContext;
+
+GLFWwindow* window;
 
 // default rendering setting
 const int window_width         = 720; 
@@ -131,30 +138,115 @@ int main(int argc, char** argv) {
 	rf2.read(reinterpret_cast<char*> (allBlendShapeVertices3Nx1.data), NumberOfBlendshapes * numberOfvrtx * 3 * sizeof(double));
 	rf2.close();
 
+    //EGL code starts here - alex
+    EGLDeviceEXT eglDevs[10];
+    EGLint numDevices;
+
+    PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
+    if( eglQueryDevicesEXT == NULL )
+    {
+        exit(0);
+    }
+
+    PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
+    PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
+
+    eglQueryDevicesEXT(10, eglDevs, &numDevices);
+
+    int dcToUse = 0;
+    for( unsigned dc = 0; dc < numDevices; ++dc )
+    {
+        std::string devName( "N/A" );
+        std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
+
+        if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
+        {
+            dcToUse = dc;
+        }
+    }
+
+    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+    eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
+
+    EGLint major, minor;
+    eglInitialize(eglDisplay, &major, &minor);
+
+    EGLint configAttribs[] =
+            {
+                    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+                    EGL_BLUE_SIZE, 8,
+                    EGL_GREEN_SIZE, 8,
+                    EGL_RED_SIZE, 8,
+                    EGL_DEPTH_SIZE, 24,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+                    EGL_NONE
+            };
+
+    EGLint numConfigs;
+    EGLConfig eglCfg;
+    eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
+
+    EGLint pbufferAttribs[] =
+            {
+                    EGL_WIDTH, window_width,
+                    EGL_HEIGHT, window_height,
+                    EGL_NONE
+            };
+
+    EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
+    if( eglSurface == EGL_NO_SURFACE )
+    {
+        exit(0);
+    }
+
+    eglBindAPI(EGL_OPENGL_API);
+
+    EGLint ctxAttribs[] =
+            {
+                    EGL_CONTEXT_MAJOR_VERSION, 4,
+                    EGL_CONTEXT_MINOR_VERSION, 1
+            };
+
+    eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
+    if( eglContext == NULL )
+    {
+        exit(0);
+    }
+
+    eglSwapInterval( eglDisplay, 0 );
+
+    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+    // we should be able to ask OpenGL about which version we've got...
+    GLint glMajor, glMinor;
+    glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
+    glGetIntegerv(GL_MINOR_VERSION, &glMinor);
+
 	glewExperimental = true;
-	if( !glfwInit() ) {
-		return -1;
-	}
+//	if( !glfwInit() ) {
+//		return -1;
+//	}
 
-	glfwWindowHint(GLFW_SAMPLES, 4); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); 
-	glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-
-	window = glfwCreateWindow(window_width, window_height, "Input Face", NULL, NULL);
-
-	if( window == NULL ) {
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);          
-	if (glewInit() != GLEW_OK) {
-		return -1;
-	}
+//	glfwWindowHint(GLFW_SAMPLES, 4);
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+//	glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+//
+//	window = glfwCreateWindow(window_width, window_height, "Input Face", NULL, NULL);
+//
+//	if( window == NULL ) {
+//		glfwTerminate();
+//		return -1;
+//	}
+//
+//	glfwMakeContextCurrent(window);
+//	if (glewInit() != GLEW_OK) {
+//		return -1;
+//	}
 	
 	unsigned char* image;
 	int tex_width, tex_height;
@@ -349,7 +441,7 @@ int main(int argc, char** argv) {
 		
 		if (obj_file) exporter.Export(currentScene, "obj",  mesh_FILE);
 	}
-	glfwDestroyWindow(window);
+//	glfwDestroyWindow(window);
 	if (format == "png") SOIL_free_image_data(image);
 	return 0;
 
