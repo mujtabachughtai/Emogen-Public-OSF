@@ -19,7 +19,7 @@ fi
 SHADER_DIRECTORY=$PWD/EmoGen_tool/common/
 
 # important: format of csv file with blendshape weights (see readme.txt in ApplyBlendweights/ folder for details)
-weights_FILE=$PWD/user_data/initialisation_transposed.csv
+weights_FILE=$PWD/user_output/initialisation_transposed.csv
 
 output_PATH=$PWD/user_output/
 
