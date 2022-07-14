@@ -12,7 +12,7 @@ find_package(glfw3 REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 add_executable(go_3D main.cpp ../EmoGen_tool/common/shader.cpp ../EmoGen_tool/common/texture.cpp) 
-target_link_libraries(go_3D glfw ${OpenCV_LIBS} assimp ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} /usr/lib/libSOIL.so )
+target_link_libraries(go_3D glfw EGL ${OpenCV_LIBS} assimp ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES} /usr/lib/libSOIL.so )
 
 
 
