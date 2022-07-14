@@ -3,7 +3,7 @@
 NUMBER_BLENDSHAPES=150
 
 # SELECT MODEL: MALE OR FEMALE
-model="FEMALE"
+model="MALE"
 
 BLENDSHAPE_DIRECTORY=$PWD/data/$model"/"
 
@@ -24,7 +24,7 @@ weights_FILE=$PWD/user_data/sample.csv
 output_PATH=$PWD/user_output/
 
 # number of faces from the csv file to be rendered: 1 to number of blendweight vectors in the csv file
-total=5
+total=10
 
 # Need a 3D mesh (obj) as well as image? yes [true], no[false] Each mesh file is ~3.0 MB
 obj_file=false
