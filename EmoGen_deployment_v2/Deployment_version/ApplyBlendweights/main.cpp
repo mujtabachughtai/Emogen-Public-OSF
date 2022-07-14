@@ -223,7 +223,9 @@ int main(int argc, char** argv) {
 
     // EGL Code ends here - Alex
 
-//	glewExperimental = true;
+    std::cout << " Success EGL" << std::endl;
+    
+	glewExperimental = true;
 //	if( !glfwInit() ) {
 //		return -1;
 //	}
@@ -244,9 +246,9 @@ int main(int argc, char** argv) {
 //	}
 //
 //	glfwMakeContextCurrent(window);
-//	if (glewInit() != GLEW_OK) {
-//		return -1;
-//	}
+	if (glewInit() != GLEW_OK) {
+		return -1;
+	}
 	
 	unsigned char* image;
 	int tex_width, tex_height;
@@ -254,6 +256,9 @@ int main(int argc, char** argv) {
 	
 	Assimp::Exporter exporter;
 	infi_weights.open(weights);
+
+	std::cout << " Success Loop Start" << std::endl;
+
 	for (unsigned int sample_nr = 0; sample_nr < total; ++sample_nr) {
 
 		cv::Mat_<double>  weights = cv::Mat(1, NumberOfBlendshapes, CV_64F, double(0.0));
@@ -365,6 +370,8 @@ int main(int argc, char** argv) {
 		char image_FILE_ext[100]; 
 		sprintf(image_FILE_ext, "sample_%d.jpg", sample_nr);
 		image_FILE = output_PATH + image_FILE_ext;
+
+		std::cout << " Success Image File" << std::endl;
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);
@@ -428,6 +435,8 @@ int main(int argc, char** argv) {
 
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
 
+		std::cout << " Success glDrawElements" << std::endl;
+
 		unsigned char pixels[cropped_image_height * cropped_image_width  * 4 ] = { 0 };
 		glReadPixels(crop_corner_width, crop_corner_height, cropped_image_width, cropped_image_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
 		write_buffer_to_file(pixels); 
@@ -441,6 +450,8 @@ int main(int argc, char** argv) {
 		glDeleteVertexArrays(1, &VertexArrayID);
 		
 		if (obj_file) exporter.Export(currentScene, "obj",  mesh_FILE);
+
+		std::cout << " Success Iteration" << std::endl;
 	}
 //	glfwDestroyWindow(window);
 	if (format == "png") SOIL_free_image_data(image);

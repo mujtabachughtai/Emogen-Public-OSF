@@ -29,6 +29,6 @@ total=10
 # Need a 3D mesh (obj) as well as image? yes [true], no[false] Each mesh file is ~3.0 MB
 obj_file=false
 
-$PWD/ApplyBlendweights/build/go_3D $BLENDSHAPE_DIRECTORY $NUMBER_BLENDSHAPES $weights_FILE $output_PATH $TEXTURE_FILE $SHADER_DIRECTORY $total $obj_file
+MESA_GL_VERSION_OVERRIDE=3.3 MESA_GLSL_VERSION_OVERRIDE=330 $PWD/ApplyBlendweights/build/go_3D $BLENDSHAPE_DIRECTORY $NUMBER_BLENDSHAPES $weights_FILE $output_PATH $TEXTURE_FILE $SHADER_DIRECTORY $total $obj_file
 
 
