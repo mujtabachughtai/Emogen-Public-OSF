@@ -36,8 +36,8 @@
 // OpenGL
 //#include <GL/glew.h>
 //#include <GL/glu.h>
-//#include <glm/glm.hpp>
-//#include "glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include "glm/gtc/matrix_transform.hpp"
 //#include <GLFW/glfw3.h>
 //#include <GL/gl.h>
 //#include "common/shader.hpp"
@@ -173,8 +173,8 @@ int main(int argc, char** argv) {
     GenNr_counter = atoi(argv[28]);
     USER_DIRECTORY = argv[50];
 
-    window_width = atoi(argv[25]) * 0.5; //1024
-    window_height = atoi(argv[26]) * (2.0/3.0); //768
+    //window_width = atoi(argv[25]) * 0.5; //1024
+    //window_height = atoi(argv[26]) * (2.0/3.0); //768
 
     min_num_of_sel = atoi(argv[22]);
     max_num_of_sel = atoi(argv[23]);
