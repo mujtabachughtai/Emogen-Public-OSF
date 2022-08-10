@@ -34,19 +34,19 @@
 #include <algorithm>
 
 // OpenGL
-#include <GL/glew.h>
-#include <GL/glu.h>
-#include <glm/glm.hpp>
-#include "glm/gtc/matrix_transform.hpp"
-#include <GLFW/glfw3.h>
-#include <GL/gl.h>
-#include "common/shader.hpp"
-#include "common/objloader.hpp"
-#include "common/controls.hpp"
-#include "common/text2D.hpp"
-#include "common/texture.hpp"
+//#include <GL/glew.h>
+//#include <GL/glu.h>
+//#include <glm/glm.hpp>
+//#include "glm/gtc/matrix_transform.hpp"
+//#include <GLFW/glfw3.h>
+//#include <GL/gl.h>
+//#include "common/shader.hpp"
+//#include "common/objloader.hpp"
+//#include "common/controls.hpp"
+//#include "common/text2D.hpp"
+//#include "common/texture.hpp"
 
-#include <gtk/gtk.h>
+//#include <gtk/gtk.h>
 
 #include "data.hpp"
 #include "utility.hpp"
@@ -54,10 +54,10 @@
 #include <thread>
 #include <mutex>
 
-#include <SOIL/SOIL.h>
+//#include <SOIL/SOIL.h>
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
+//#include <EGL/egl.h>
+//#include <EGL/eglext.h>
 
 int fileWatcherChecker = -1;
 
@@ -90,7 +90,7 @@ std::string USER_DIRECTORY;
 std::string WEB_BASE_DIRECTORY("/home/emogen/emogenWeb/shared/public/");
 std::string orderOfblendshapes_FILE;
 std::string Neutral_FILE;
-std::string SHADER_DIRECTORY;
+//std::string SHADER_DIRECTORY;
 std::string EMOTION_TYPE;
 std::string TARGET_EMOTION;
 std::string SELECTION_INSTRUCTIONS;
@@ -100,24 +100,24 @@ std::string NEUTRAL_IN_UPDATED_POSITION_FILE;
 
 int maximum_number_of_generations;
 
-EGLDisplay eglDisplay;
-EGLSurface eglSurface;
-EGLContext eglContext;
-
-GLuint framebufferName;
-GLuint renderTexture;
-GLuint depthrenderbuffer;
-GLFWwindow* window; //TODO: Need to remove it in the future
+//EGLDisplay eglDisplay;
+//EGLSurface eglSurface;
+//EGLContext eglContext;
+//
+//GLuint framebufferName;
+//GLuint renderTexture;
+//GLuint depthrenderbuffer;
+//GLFWwindow* window; //TODO: Need to remove it in the future
 
 // default rendering setting
-int window_width;  // = 1024;
-int window_height; // = 768;
-glm::vec3 camera_position = glm::vec3(0.0f, 176.0f, 950.0f);
-glm::vec3 lightPos        = glm::vec3(0.0f, 176.0f, 950.0f);
-float lookat_z = 11.0f;
-float FOV = 5.0f;
-float Znear = 910.0f;    // 0.1f;
-float Zfar =  1010.0f;    // 1500.0f;
+//int window_width;  // = 1024;
+//int window_height; // = 768;
+//glm::vec3 camera_position = glm::vec3(0.0f, 176.0f, 950.0f);
+//glm::vec3 lightPos        = glm::vec3(0.0f, 176.0f, 950.0f);
+//float lookat_z = 11.0f;
+//float FOV = 5.0f;
+//float Znear = 910.0f;    // 0.1f;
+//float Zfar =  1010.0f;    // 1500.0f;
 
 data * my_data;
 
@@ -221,7 +221,7 @@ int main(int argc, char** argv) {
     BLENDSHAPE_DIRECTORY=argv[1];
     orderOfblendshapes_FILE=argv[2];
     Neutral_FILE=argv[3];
-    SHADER_DIRECTORY=argv[4];
+//    SHADER_DIRECTORY=argv[4];
     OUTPUT_DIRECTORY = argv[6];
 
     EMOTION_TYPE = argv[5];
@@ -248,12 +248,12 @@ int main(int argc, char** argv) {
 
     maximum_number_of_generations=atoi(argv[7]);
 
-    const char * TEXTURE_FILE = argv[10];
-    std::string texture_file_as_string(TEXTURE_FILE);
-    std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
-    if (format != "png" && format!= "bmp") {
-        return 1;
-    }
+//    const char * TEXTURE_FILE = argv[10];
+//    std::string texture_file_as_string(TEXTURE_FILE);
+//    std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
+//    if (format != "png" && format!= "bmp") {
+//        return 1;
+//    }
 
     // 1a. initialise data structures
     my_data = new data();
@@ -317,18 +317,18 @@ int main(int argc, char** argv) {
     if (failed == 1) return 1;
 
 
-    monster_log_filename = OUTPUT_DIRECTORY + "monster_log.txt";
-    std::ifstream check_monster_log(monster_log_filename);
-    if(check_monster_log){
-        check_monster_log.close();
-        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-
-    } else {
-        check_monster_log.close();
-        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::trunc);
-
-    }
-    monster_log.close();
+//    monster_log_filename = OUTPUT_DIRECTORY + "monster_log.txt";
+//    std::ifstream check_monster_log(monster_log_filename);
+//    if(check_monster_log){
+//        check_monster_log.close();
+//        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
+//
+//    } else {
+//        check_monster_log.close();
+//        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::trunc);
+//
+//    }
+//    monster_log.close();
 
 
 
@@ -350,144 +350,144 @@ int main(int argc, char** argv) {
     // 3. visualise 10 faces + run GUI for clicking
     // initialise the EGL renderer
 
-    EGLDeviceEXT eglDevs[10];
-    EGLint numDevices;
+//    EGLDeviceEXT eglDevs[10];
+//    EGLint numDevices;
+//
+//    PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
+//    if( eglQueryDevicesEXT == NULL )
+//    {
+//        exit(0);
+//    }
 
-    PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
-    if( eglQueryDevicesEXT == NULL )
-    {
-        exit(0);
-    }
+//    PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
+//    PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
+//
+//    eglQueryDevicesEXT(10, eglDevs, &numDevices);
+//
+//    int dcToUse = 0;
+//    for( unsigned dc = 0; dc < numDevices; ++dc )
+//    {
+//        std::string devName( "N/A" );
+//        std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
+//
+//        if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
+//        {
+//            dcToUse = dc;
+//        }
+//    }
 
-    PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
-    PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
+//    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
+//
+//    eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
+//
+//    EGLint major, minor;
+//    eglInitialize(eglDisplay, &major, &minor);
+//
+//    EGLint configAttribs[] =
+//            {
+//                    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+//                    EGL_BLUE_SIZE, 8,
+//                    EGL_GREEN_SIZE, 8,
+//                    EGL_RED_SIZE, 8,
+//                    EGL_DEPTH_SIZE, 24,
+//                    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+//                    EGL_NONE
+//            };
 
-    eglQueryDevicesEXT(10, eglDevs, &numDevices);
+//    EGLint numConfigs;
+//    EGLConfig eglCfg;
+//    eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
+//
+//    EGLint pbufferAttribs[] =
+//            {
+//                    EGL_WIDTH, window_width,
+//                    EGL_HEIGHT, window_height,
+//                    EGL_NONE
+//            };
+//
+//    EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
+//    if( eglSurface == EGL_NO_SURFACE )
+//    {
+//        exit(0);
+//    }
 
-    int dcToUse = 0;
-    for( unsigned dc = 0; dc < numDevices; ++dc )
-    {
-        std::string devName( "N/A" );
-        std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
+//    eglBindAPI(EGL_OPENGL_API);
 
-        if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
-        {
-            dcToUse = dc;
-        }
-    }
+//    EGLint ctxAttribs[] =
+//            {
+//                    EGL_CONTEXT_MAJOR_VERSION, 4,
+//                    EGL_CONTEXT_MINOR_VERSION, 1
+//            };
 
-    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
+//    eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
+//    if( eglContext == NULL )
+//    {
+//        exit(0);
+//    }
 
-    eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
-
-    EGLint major, minor;
-    eglInitialize(eglDisplay, &major, &minor);
-
-    EGLint configAttribs[] =
-            {
-                    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-                    EGL_BLUE_SIZE, 8,
-                    EGL_GREEN_SIZE, 8,
-                    EGL_RED_SIZE, 8,
-                    EGL_DEPTH_SIZE, 24,
-                    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-                    EGL_NONE
-            };
-
-    EGLint numConfigs;
-    EGLConfig eglCfg;
-    eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
-
-    EGLint pbufferAttribs[] =
-            {
-                    EGL_WIDTH, window_width,
-                    EGL_HEIGHT, window_height,
-                    EGL_NONE
-            };
-
-    EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
-    if( eglSurface == EGL_NO_SURFACE )
-    {
-        exit(0);
-    }
-
-    eglBindAPI(EGL_OPENGL_API);
-
-    EGLint ctxAttribs[] =
-            {
-                    EGL_CONTEXT_MAJOR_VERSION, 4,
-                    EGL_CONTEXT_MINOR_VERSION, 1
-            };
-
-    eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
-    if( eglContext == NULL )
-    {
-        exit(0);
-    }
-
-    eglSwapInterval( eglDisplay, 0 );
-
-    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+//    eglSwapInterval( eglDisplay, 0 );
+//
+//    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
 
     // we should be able to ask OpenGL about which version we've got...
-    GLint glMajor, glMinor;
-    glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
-    glGetIntegerv(GL_MINOR_VERSION, &glMinor);
+//    GLint glMajor, glMinor;
+//    glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
+//    glGetIntegerv(GL_MINOR_VERSION, &glMinor);
 
-    glewExperimental=true;
-    if (glewInit() != GLEW_OK) {
-        return -1;
-    }
+//    glewExperimental=true;
+//    if (glewInit() != GLEW_OK) {
+//        return -1;
+//    }
 
-    glClearColor(0.0f,0.0f, 0.0f, 1.0f);
+//    glClearColor(0.0f,0.0f, 0.0f, 1.0f);
+//
+//    glEnable(GL_DEPTH_TEST); // Enable depth test
+//    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
+//
+//    GLuint VertexArrayID;
+//    glGenVertexArrays(1, &VertexArrayID);
+//    glBindVertexArray(VertexArrayID);
 
-    glEnable(GL_DEPTH_TEST); // Enable depth test
-    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
+//    GLuint Texture;
+//    unsigned char* image;
+//    int tex_width, tex_height;
+//    if (format == "bmp") {
+//        Texture = loadBMP_custom(TEXTURE_FILE);
+//    } else if (format == "png") {
+//        image = SOIL_load_image(TEXTURE_FILE, &tex_width, &tex_height, 0, SOIL_LOAD_RGB);
+//    }
 
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
-
-    GLuint Texture;
-    unsigned char* image;
-    int tex_width, tex_height;
-    if (format == "bmp") {
-        Texture = loadBMP_custom(TEXTURE_FILE);
-    } else if (format == "png") {
-        image = SOIL_load_image(TEXTURE_FILE, &tex_width, &tex_height, 0, SOIL_LOAD_RGB);
-    }
-
-    GLuint programID = LoadShaders( (SHADER_DIRECTORY + "StandardShading.vertexshader").c_str(),  (SHADER_DIRECTORY+"StandardShading.fragmentshader").c_str());
-    GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+//    GLuint programID = LoadShaders( (SHADER_DIRECTORY + "StandardShading.vertexshader").c_str(),  (SHADER_DIRECTORY+"StandardShading.fragmentshader").c_str());
+//    GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
 
     // Get a handle for our "MVP" uniform
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
-
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_DYNAMIC_DRAW);
-
-    GLuint uvbuffer;
-    glGenBuffers(1, &uvbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_DYNAMIC_DRAW);
-
-
-    GLuint normalbuffer;
-    glGenBuffers(1, &normalbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_DYNAMIC_DRAW);
-
-
-    GLuint elementbuffer;
-    glGenBuffers(1, &elementbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
+//    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+//    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+//    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+//    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+//
+//
+//    GLuint vertexbuffer;
+//    glGenBuffers(1, &vertexbuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+//    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_DYNAMIC_DRAW);
+//
+//    GLuint uvbuffer;
+//    glGenBuffers(1, &uvbuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+//    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_DYNAMIC_DRAW);
+//
+//
+//    GLuint normalbuffer;
+//    glGenBuffers(1, &normalbuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_DYNAMIC_DRAW);
+//
+//
+//    GLuint elementbuffer;
+//    glGenBuffers(1, &elementbuffer);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
 
     std::string session_output_filename;
 
@@ -573,19 +573,19 @@ int main(int argc, char** argv) {
         generateNextGen(); //NOTE: this will generate new weights too
 
         auto start = std::chrono::steady_clock::now();
-        update_faces(vertices, normals);
+//        update_faces(vertices, normals);
         auto end = std::chrono::steady_clock::now();
 
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
-        glUnmapBuffer(GL_ARRAY_BUFFER);
+//        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+//        void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+//        memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
+//        glUnmapBuffer(GL_ARRAY_BUFFER);
+//
+//        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//        ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+//        memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
+//        glUnmapBuffer(GL_ARRAY_BUFFER);
 
 
         GenNr_counter++;
@@ -602,112 +602,112 @@ int main(int argc, char** argv) {
     }
 
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glUseProgram(programID);
-    glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar);
-
-    glm::mat4 ViewMatrix = glm::lookAt(
-            glm::vec3(camera_position.x, camera_position.y, camera_position.z),
-            glm::vec3(camera_position.x, camera_position.y, lookat_z),
-            glm::vec3(0, 1 ,0)
-    );
-
-
-    glm::mat4 ModelMatrix =  glm::mat4(1.0);
-    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-    glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-    glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-
-    glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, Texture);
-    if (format == "png") {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-    glUniform1i(TextureID, 0);
-
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(
-            0,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void*)0
-    );
-
-
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glVertexAttribPointer(
-            1,
-            2,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void*)0
-    );
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-    glVertexAttribPointer(
-            2,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            0,
-            (void*)0
-    );
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-
-
-
-    initText2D((SHADER_DIRECTORY + "Holstein.DDS").c_str());
-    printText2D("1", 115, 384, 50);
-    printText2D("2", 299, 384, 50);
-    printText2D("3", 485, 384, 50);
-    printText2D("4", 670, 384, 50);
-    printText2D("5", 860, 384, 50);
-    printText2D("6", 102, 20, 50);
-    printText2D("7", 299, 20, 50);
-    printText2D("8", 485, 20, 50);
-    printText2D("9", 670, 20, 50);
-    printText2D("1", 840, 20, 50);
-    printText2D("0", 873, 20, 50);
-
-    cleanupText2D();
-
-    glEnable(GL_DEPTH_TEST); // Enable depth test
-    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
-
-
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-
-    //glfwSwapBuffers(eglDisplay, eglSurface); //TODO: Enable this ?
-
-    cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
-
-    glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
-    cv::flip(res, res, 0);
-    //return base64 to client
-    SaveImage(res, WEB_BASE_DIRECTORY + USER_DIRECTORY + "/result.png");
-
-    if (format == "png") SOIL_free_image_data(image);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//    glUseProgram(programID);
+//    glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar);
+//
+//    glm::mat4 ViewMatrix = glm::lookAt(
+//            glm::vec3(camera_position.x, camera_position.y, camera_position.z),
+//            glm::vec3(camera_position.x, camera_position.y, lookat_z),
+//            glm::vec3(0, 1 ,0)
+//    );
+//
+//
+//    glm::mat4 ModelMatrix =  glm::mat4(1.0);
+//    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+//    glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+//    glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+//    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+//
+//
+//    glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+//
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, Texture);
+//    if (format == "png") {
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    }
+//    glUniform1i(TextureID, 0);
+//
+//
+//    glEnableVertexAttribArray(0);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+//    glVertexAttribPointer(
+//            0,
+//            3,
+//            GL_FLOAT,
+//            GL_FALSE,
+//            0,
+//            (void*)0
+//    );
+//
+//
+//    glEnableVertexAttribArray(1);
+//    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+//    glVertexAttribPointer(
+//            1,
+//            2,
+//            GL_FLOAT,
+//            GL_FALSE,
+//            0,
+//            (void*)0
+//    );
+//
+//    glEnableVertexAttribArray(2);
+//    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//    glVertexAttribPointer(
+//            2,
+//            3,
+//            GL_FLOAT,
+//            GL_FALSE,
+//            0,
+//            (void*)0
+//    );
+//
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+//
+//    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+//
+//
+//
+//    initText2D((SHADER_DIRECTORY + "Holstein.DDS").c_str());
+//    printText2D("1", 115, 384, 50);
+//    printText2D("2", 299, 384, 50);
+//    printText2D("3", 485, 384, 50);
+//    printText2D("4", 670, 384, 50);
+//    printText2D("5", 860, 384, 50);
+//    printText2D("6", 102, 20, 50);
+//    printText2D("7", 299, 20, 50);
+//    printText2D("8", 485, 20, 50);
+//    printText2D("9", 670, 20, 50);
+//    printText2D("1", 840, 20, 50);
+//    printText2D("0", 873, 20, 50);
+//
+//    cleanupText2D();
+//
+//    glEnable(GL_DEPTH_TEST); // Enable depth test
+//    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
+//
+//
+//    glDisableVertexAttribArray(0);
+//    glDisableVertexAttribArray(1);
+//    glDisableVertexAttribArray(2);
+//
+//    //glfwSwapBuffers(eglDisplay, eglSurface); //TODO: Enable this ?
+//
+//    cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
+//
+//    glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
+//    cv::flip(res, res, 0);
+//    //return base64 to client
+//    SaveImage(res, WEB_BASE_DIRECTORY + USER_DIRECTORY + "/result.png");
+//
+//    if (format == "png") SOIL_free_image_data(image);
     return 0;
 
 
@@ -1903,48 +1903,48 @@ cv::Mat read_csv(std::string input_csv){
 
 }
 
-void SaveImage(cv::Mat &img, std::string filename)
-{
-
-    if( filename.find(".floatImg") != std::string::npos)
-    {
-        // this should be an uncompressed float image.
-        std::ofstream outfi;
-        outfi.open( filename, std::ios::out | std::ios::binary );
-
-        unsigned magic,w,h,c;
-        magic = 820830001;
-        w = img.cols;
-        h = img.rows;
-        if( img.type() == CV_32FC1 )
-        {
-            c = 1;
-        }
-        else if( img.type() == CV_32FC3 )
-        {
-            c = 3;
-        }
-        else
-        {
-            throw std::runtime_error("SaveImage: Image had neither 1 nor 3 channels.");
-        }
-        outfi.write( (char*)&magic, sizeof(magic) );
-        outfi.write( (char*)&w, sizeof(w) );
-        outfi.write( (char*)&h, sizeof(h) );
-        outfi.write( (char*)&c, sizeof(c) );
-
-        outfi.write( (char*)img.data, h*w*c*sizeof(float) );
-        return;
-    }
-
-    // todo... use Magick instead of opencv. I have reasons for that... umm...
-    // honest. Probably mostly to do with OpenCV normalising things etc... maybe...
-    if( img.type() == CV_32FC3 || img.type() == CV_32FC1 )
-    {
-        img *= 255;
-    }
-    cv::imwrite(filename, img);
-}
+//void SaveImage(cv::Mat &img, std::string filename)
+//{
+//
+//    if( filename.find(".floatImg") != std::string::npos)
+//    {
+//        // this should be an uncompressed float image.
+//        std::ofstream outfi;
+//        outfi.open( filename, std::ios::out | std::ios::binary );
+//
+//        unsigned magic,w,h,c;
+//        magic = 820830001;
+//        w = img.cols;
+//        h = img.rows;
+//        if( img.type() == CV_32FC1 )
+//        {
+//            c = 1;
+//        }
+//        else if( img.type() == CV_32FC3 )
+//        {
+//            c = 3;
+//        }
+//        else
+//        {
+//            throw std::runtime_error("SaveImage: Image had neither 1 nor 3 channels.");
+//        }
+//        outfi.write( (char*)&magic, sizeof(magic) );
+//        outfi.write( (char*)&w, sizeof(w) );
+//        outfi.write( (char*)&h, sizeof(h) );
+//        outfi.write( (char*)&c, sizeof(c) );
+//
+//        outfi.write( (char*)img.data, h*w*c*sizeof(float) );
+//        return;
+//    }
+//
+//    // todo... use Magick instead of opencv. I have reasons for that... umm...
+//    // honest. Probably mostly to do with OpenCV normalising things etc... maybe...
+//    if( img.type() == CV_32FC3 || img.type() == CV_32FC1 )
+//    {
+//        img *= 255;
+//    }
+//    cv::imwrite(filename, img);
+//}
 
 void save_custom_session(std::vector<std::vector<double>> weights, int generation, std::string user_dir){
 
