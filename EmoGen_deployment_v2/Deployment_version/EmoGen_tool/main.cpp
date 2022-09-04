@@ -173,9 +173,6 @@ int main(int argc, char** argv) {
     GenNr_counter = atoi(argv[28]);
     USER_DIRECTORY = argv[50];
 
-    //window_width = atoi(argv[25]) * 0.5; //1024
-    //window_height = atoi(argv[26]) * (2.0/3.0); //768
-
     min_num_of_sel = atoi(argv[22]);
     max_num_of_sel = atoi(argv[23]);
 
@@ -221,7 +218,6 @@ int main(int argc, char** argv) {
     BLENDSHAPE_DIRECTORY=argv[1];
     orderOfblendshapes_FILE=argv[2];
     Neutral_FILE=argv[3];
-//    SHADER_DIRECTORY=argv[4];
     OUTPUT_DIRECTORY = argv[6];
 
     EMOTION_TYPE = argv[5];
@@ -248,24 +244,8 @@ int main(int argc, char** argv) {
 
     maximum_number_of_generations=atoi(argv[7]);
 
-//    const char * TEXTURE_FILE = argv[10];
-//    std::string texture_file_as_string(TEXTURE_FILE);
-//    std::string format = texture_file_as_string.substr( texture_file_as_string.length() - 3 );
-//    if (format != "png" && format!= "bmp") {
-//        return 1;
-//    }
-
-    // 1a. initialise data structures
     my_data = new data();
 
-    // 1b. get transform to default rendering position if neccessary
-
-    // std::string target_barycentrics_filename=argv[8];
-    // cv::Mat points = get_localisation_point_cloud(target_barycentrics_filename);
-    // points.copyTo( my_data -> incoming_point_cloud );
-    // helper.procrustes(my_data->default_point_cloud, my_data->incoming_point_cloud);
-
-    // 1b. read transform from file
     cv::Mat info(4, 3, CV_64F);
     info.setTo(0.0);
     std::string info_filename =  BLENDSHAPE_DIRECTORY + "data2.dat";
@@ -279,10 +259,8 @@ int main(int argc, char** argv) {
     rf.close();
     scale = 1.0;
 
-
     INITIALISATION_FILE = argv[9];
     NEUTRAL_IN_UPDATED_POSITION_FILE = argv[11];
-
 
     my_data -> collision_anchor_coordinates = helper.read_barycentrics(argv[12]);
     my_data -> collision_anchor_coordinates_teeth = helper.read_barycentrics(argv[13]);
@@ -307,34 +285,13 @@ int main(int argc, char** argv) {
         if (!include_eye_lid_motion
             && std::find(my_data -> eye_lid_motion_blnds.begin(), my_data -> eye_lid_motion_blnds.end(), nr) != my_data -> eye_lid_motion_blnds.end() ) continue;
 
-
         sample_list.push_back(nr);
 
     }
 
-
     int failed = my_data -> initialise(); //NOTE: here previous weights and current weights are set for the first time alex
     if (failed == 1) return 1;
 
-
-//    monster_log_filename = OUTPUT_DIRECTORY + "monster_log.txt";
-//    std::ifstream check_monster_log(monster_log_filename);
-//    if(check_monster_log){
-//        check_monster_log.close();
-//        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::app);
-//
-//    } else {
-//        check_monster_log.close();
-//        monster_log.open(monster_log_filename, std::ofstream::out | std::ofstream::trunc);
-//
-//    }
-//    monster_log.close();
-
-
-
-    // 3. load 10 initialisation faces or generate 10 initialisation faces - DONE
-    // Read our .obj file
-    // OPENGL RENDERER
     std::vector<unsigned int> indices;
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
@@ -346,148 +303,6 @@ int main(int argc, char** argv) {
 
     // to get the correctives into the previous initialisation
     my_data ->prepare_for_next_generation();
-
-    // 3. visualise 10 faces + run GUI for clicking
-    // initialise the EGL renderer
-
-//    EGLDeviceEXT eglDevs[10];
-//    EGLint numDevices;
-//
-//    PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT = (PFNEGLQUERYDEVICESEXTPROC) eglGetProcAddress("eglQueryDevicesEXT");
-//    if( eglQueryDevicesEXT == NULL )
-//    {
-//        exit(0);
-//    }
-
-//    PFNEGLQUERYDEVICESTRINGEXTPROC eglQueryDeviceStringEXT = (PFNEGLQUERYDEVICESTRINGEXTPROC) eglGetProcAddress("eglQueryDeviceStringEXT");
-//    PFNEGLQUERYDEVICEATTRIBEXTPROC eglQueryDeviceAttribEXT = (PFNEGLQUERYDEVICEATTRIBEXTPROC) eglGetProcAddress("eglQueryDeviceAttribEXT");
-//
-//    eglQueryDevicesEXT(10, eglDevs, &numDevices);
-//
-//    int dcToUse = 0;
-//    for( unsigned dc = 0; dc < numDevices; ++dc )
-//    {
-//        std::string devName( "N/A" );
-//        std::string devExtensions( eglQueryDeviceStringEXT( eglDevs[dc], EGL_EXTENSIONS ) );
-//
-//        if( devExtensions.find("drm") != std::string::npos && dcToUse < 0)
-//        {
-//            dcToUse = dc;
-//        }
-//    }
-
-//    PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC) eglGetProcAddress("eglGetPlatformDisplayEXT");
-//
-//    eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[dcToUse], 0);
-//
-//    EGLint major, minor;
-//    eglInitialize(eglDisplay, &major, &minor);
-//
-//    EGLint configAttribs[] =
-//            {
-//                    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-//                    EGL_BLUE_SIZE, 8,
-//                    EGL_GREEN_SIZE, 8,
-//                    EGL_RED_SIZE, 8,
-//                    EGL_DEPTH_SIZE, 24,
-//                    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-//                    EGL_NONE
-//            };
-
-//    EGLint numConfigs;
-//    EGLConfig eglCfg;
-//    eglChooseConfig(eglDisplay, configAttribs, &eglCfg, 1, &numConfigs);
-//
-//    EGLint pbufferAttribs[] =
-//            {
-//                    EGL_WIDTH, window_width,
-//                    EGL_HEIGHT, window_height,
-//                    EGL_NONE
-//            };
-//
-//    EGLSurface eglSurface = eglCreatePbufferSurface(eglDisplay, eglCfg, pbufferAttribs);
-//    if( eglSurface == EGL_NO_SURFACE )
-//    {
-//        exit(0);
-//    }
-
-//    eglBindAPI(EGL_OPENGL_API);
-
-//    EGLint ctxAttribs[] =
-//            {
-//                    EGL_CONTEXT_MAJOR_VERSION, 4,
-//                    EGL_CONTEXT_MINOR_VERSION, 1
-//            };
-
-//    eglContext = eglCreateContext(eglDisplay, eglCfg, EGL_NO_CONTEXT, NULL);
-//    if( eglContext == NULL )
-//    {
-//        exit(0);
-//    }
-
-//    eglSwapInterval( eglDisplay, 0 );
-//
-//    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-
-    // we should be able to ask OpenGL about which version we've got...
-//    GLint glMajor, glMinor;
-//    glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
-//    glGetIntegerv(GL_MINOR_VERSION, &glMinor);
-
-//    glewExperimental=true;
-//    if (glewInit() != GLEW_OK) {
-//        return -1;
-//    }
-
-//    glClearColor(0.0f,0.0f, 0.0f, 1.0f);
-//
-//    glEnable(GL_DEPTH_TEST); // Enable depth test
-//    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
-//
-//    GLuint VertexArrayID;
-//    glGenVertexArrays(1, &VertexArrayID);
-//    glBindVertexArray(VertexArrayID);
-
-//    GLuint Texture;
-//    unsigned char* image;
-//    int tex_width, tex_height;
-//    if (format == "bmp") {
-//        Texture = loadBMP_custom(TEXTURE_FILE);
-//    } else if (format == "png") {
-//        image = SOIL_load_image(TEXTURE_FILE, &tex_width, &tex_height, 0, SOIL_LOAD_RGB);
-//    }
-
-//    GLuint programID = LoadShaders( (SHADER_DIRECTORY + "StandardShading.vertexshader").c_str(),  (SHADER_DIRECTORY+"StandardShading.fragmentshader").c_str());
-//    GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
-
-    // Get a handle for our "MVP" uniform
-//    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-//    GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-//    GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-//    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-//
-//
-//    GLuint vertexbuffer;
-//    glGenBuffers(1, &vertexbuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-//    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_DYNAMIC_DRAW);
-//
-//    GLuint uvbuffer;
-//    glGenBuffers(1, &uvbuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-//    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_DYNAMIC_DRAW);
-//
-//
-//    GLuint normalbuffer;
-//    glGenBuffers(1, &normalbuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_DYNAMIC_DRAW);
-//
-//
-//    GLuint elementbuffer;
-//    glGenBuffers(1, &elementbuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
 
     std::string session_output_filename;
 
@@ -568,25 +383,8 @@ int main(int argc, char** argv) {
         }
 
         //Then start generating next gen based on the user choices
-
         // Generate new iteration
         generateNextGen(); //NOTE: this will generate new weights too
-
-        auto start = std::chrono::steady_clock::now();
-//        update_faces(vertices, normals);
-        auto end = std::chrono::steady_clock::now();
-
-
-//        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-//        void *ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-//        memcpy(ptr, &vertices[0], vertices.size() * sizeof(glm::vec3));
-//        glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//        ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-//        memcpy(ptr, &normals[0], normals.size() * sizeof(glm::vec3));
-//        glUnmapBuffer(GL_ARRAY_BUFFER);
-
 
         GenNr_counter++;
 
@@ -598,116 +396,8 @@ int main(int argc, char** argv) {
 
         my_data->chosen_rows.clear();
         stall_interface = false;
-
     }
 
-
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//    glUseProgram(programID);
-//    glm::mat4 ProjectionMatrix =  glm::perspective(glm::radians(FOV), (float) window_width / (float) window_height, Znear, Zfar);
-//
-//    glm::mat4 ViewMatrix = glm::lookAt(
-//            glm::vec3(camera_position.x, camera_position.y, camera_position.z),
-//            glm::vec3(camera_position.x, camera_position.y, lookat_z),
-//            glm::vec3(0, 1 ,0)
-//    );
-//
-//
-//    glm::mat4 ModelMatrix =  glm::mat4(1.0);
-//    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-//    glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-//    glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-//    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-//
-//
-//    glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-//
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, Texture);
-//    if (format == "png") {
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    }
-//    glUniform1i(TextureID, 0);
-//
-//
-//    glEnableVertexAttribArray(0);
-//    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-//    glVertexAttribPointer(
-//            0,
-//            3,
-//            GL_FLOAT,
-//            GL_FALSE,
-//            0,
-//            (void*)0
-//    );
-//
-//
-//    glEnableVertexAttribArray(1);
-//    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-//    glVertexAttribPointer(
-//            1,
-//            2,
-//            GL_FLOAT,
-//            GL_FALSE,
-//            0,
-//            (void*)0
-//    );
-//
-//    glEnableVertexAttribArray(2);
-//    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//    glVertexAttribPointer(
-//            2,
-//            3,
-//            GL_FLOAT,
-//            GL_FALSE,
-//            0,
-//            (void*)0
-//    );
-//
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-//
-//    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-//
-//
-//
-//    initText2D((SHADER_DIRECTORY + "Holstein.DDS").c_str());
-//    printText2D("1", 115, 384, 50);
-//    printText2D("2", 299, 384, 50);
-//    printText2D("3", 485, 384, 50);
-//    printText2D("4", 670, 384, 50);
-//    printText2D("5", 860, 384, 50);
-//    printText2D("6", 102, 20, 50);
-//    printText2D("7", 299, 20, 50);
-//    printText2D("8", 485, 20, 50);
-//    printText2D("9", 670, 20, 50);
-//    printText2D("1", 840, 20, 50);
-//    printText2D("0", 873, 20, 50);
-//
-//    cleanupText2D();
-//
-//    glEnable(GL_DEPTH_TEST); // Enable depth test
-//    glDepthFunc(GL_LESS);   // Accept fragment if it is closer to the camera than the former one
-//
-//
-//    glDisableVertexAttribArray(0);
-//    glDisableVertexAttribArray(1);
-//    glDisableVertexAttribArray(2);
-//
-//    //glfwSwapBuffers(eglDisplay, eglSurface); //TODO: Enable this ?
-//
-//    cv::Mat res(window_height, window_width, CV_8UC3, cv::Scalar(0, 0, 0));
-//
-//    glReadPixels(0, 0, window_width, window_height, GL_BGR, GL_UNSIGNED_BYTE, res.data);
-//    cv::flip(res, res, 0);
-//    //return base64 to client
-//    SaveImage(res, WEB_BASE_DIRECTORY + USER_DIRECTORY + "/result.png");
-//
-//    if (format == "png") SOIL_free_image_data(image);
     return 0;
 
 
@@ -715,12 +405,8 @@ int main(int argc, char** argv) {
 
 bool load_blendshapes_speedy(int expected_number) {
 
-
     utility helper;
-
     Assimp::Importer importer;
-
-
 
     const aiScene * currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices  );
     aiMesh* mesh = currentScene->mMeshes[0];
@@ -739,8 +425,6 @@ bool load_blendshapes_speedy(int expected_number) {
         mesh->mVertices[k].y = (float) ptt.at<double>(1);
         mesh->mVertices[k].z = (float) ptt.at<double>(2);
 
-
-
     }
 
     cv::Mat collision_anchor_neutral = helper.get_anchor_point_cartersian_coordinates(mesh, my_data -> collision_anchor_coordinates, false);
@@ -752,7 +436,6 @@ bool load_blendshapes_speedy(int expected_number) {
     Assimp::Exporter exporter;
     exporter.Export(currentScene, "obj",  NEUTRAL_IN_UPDATED_POSITION_FILE);
     Neutral_FILE = NEUTRAL_IN_UPDATED_POSITION_FILE;
-
 
     cv::Mat init(expected_number * numberOfvrtx * 3, 1, CV_64F);
     init.setTo(0.0);
@@ -773,7 +456,6 @@ bool load_blendshapes_speedy(int expected_number) {
 
     std::vector<std::string> blendshape_names;
     NumberOfBlendshapes = 0;
-
 
     std::map<std::string,int> lefts;
     std::map<std::string,int> rights;
@@ -876,7 +558,6 @@ bool load_blendshapes_speedy(int expected_number) {
 
             if (is_collision_blndsh) {
 
-
                 const aiScene * currentScene;
                 currentScene = importer.ReadFile(Neutral_FILE,  aiProcess_JoinIdenticalVertices );
                 aiMesh* mesh = currentScene->mMeshes[0];
@@ -920,15 +601,12 @@ bool load_blendshapes_speedy(int expected_number) {
         }
 
         NumberOfBlendshapes++;
-
     }
 
 
     // sanity check
     if (expected_number != NumberOfBlendshapes) {
-
         return false;
-
     }
 
     for (std::map<std::string, int>::iterator it = my_data->correctives.begin(); it != my_data->correctives.end(); ++it) {
@@ -961,7 +639,6 @@ bool load_blendshapes_speedy(int expected_number) {
         std::map<std::string, int>::iterator it_rgt = rights.find(it_lft->first);
         if (it_rgt != rights.end())  my_data ->left_right_pairs[it_lft -> second]= it_rgt -> second;
         else std::cout << "Error: left blendshape " << it_lft -> first << " does not have a corresponding right shape " << std::endl;
-
     }
 
     // LIP COLLISIONS
@@ -1014,10 +691,8 @@ bool load_blendshapes_speedy(int expected_number) {
 
     collision_deviation = cv::Mat();
 
-
     record = cv::Mat(NumberOfBlendshapes + 2, 10, CV_64F);
     record.setTo(0.0);
-
 
     return true;
 }
@@ -1026,7 +701,6 @@ bool load_blendshapes_speedy(int expected_number) {
 
 
 void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs,  std::vector<glm::vec3> &normals) {
-
 
     Assimp::Importer importer;
     for (int choice_nr = 0; choice_nr < 10 ; ++choice_nr) {
@@ -1185,13 +859,10 @@ void load_initialisation(std::vector<unsigned int> &indices, std::vector<glm::ve
             indices.push_back(offset + mesh->mFaces[i].mIndices[2]);
 
         }
-
     }
-
 }
 
 void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &normals) {
-
 
     int numOfcollision_ptrs =  my_data -> collision_anchor_coordinates.rows;
     vertices.clear();
@@ -1199,8 +870,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
 
     Assimp::Importer importer;
     for (int choice_nr = 0; choice_nr < 10; ++choice_nr) {
-
-
 
         bool copied_exactly = std::find(my_data -> copied_exactly_IDs.begin(),
                                         my_data -> copied_exactly_IDs.end(), choice_nr) != my_data -> copied_exactly_IDs.end();
@@ -1225,14 +894,9 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
                 }
             }
 
-
-            // non-zero corrective is only allowed if there has been a session reset (exit_code == 2) or if this is one of the faces copied
-            // should not happen but just in case any future developments inadvertently upset this..
-
             if(is_corrective && exit_code!=2 && !copied_exactly ) {
                 my_data->weights_current_generation[choice_nr][i] = 0.0;
             };
-
 
             if (is_corrective && exit_code !=2 && !copied_exactly) continue;
 
@@ -1247,11 +911,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
 
             }
         }
-
-        //  (protocol_generated_initialisation && reinit_after_reset && !copied_exactly) - always apply correctives, even after initialisation
-        //  (except when copied exactly)
-        //  (exit_code != 2 && !copied_exactly) - if not session reset and if the face is not copied exactly
-
 
         if ( (protocol_generated_initialisation && reinit_after_reset && !copied_exactly) || (exit_code != 2 && !copied_exactly) ) {
 
@@ -1297,8 +956,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
         if (include_head_motion) helper.apply_head_motion(mesh, choice_nr);
         helper.compute_smooth_vertex_normals(mesh);
 
-
-
         // ATTENTION: IF ANY CORRECTIVE INVOLVES A PUFF SHAPE NEED TO AN ADDITIONAL APPLY CORRECTIVE RUN!
 
         cv::Mat data(10, NumberOfBlendshapes, CV_64F);
@@ -1314,8 +971,6 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
         header.setTo(0.0);
         cv::vconcat(header, data, data);
         data.copyTo(record);
-
-
 
         for(unsigned int i=0; i<mesh->mNumVertices; i++) {
 
@@ -1375,23 +1030,16 @@ void update_faces(std::vector<glm::vec3> &vertices,  std::vector<glm::vec3> &nor
             aiVector3D n = mesh->mNormals[i];
             normals.push_back(glm::vec3(n.x, n.y, n.z));
 
-
         }
 
-
-
     }
-
-
 
 }
 
 
 void generateNextGen() {
 
-
     my_data -> copied_exactly_IDs.clear();
-
 
     unsigned seed_1 = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator_1(seed_1);
@@ -1401,7 +1049,6 @@ void generateNextGen() {
     while(seed_2 == seed_1) seed_2 = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator_2(seed_2);
     std::uniform_int_distribution<int> distribution_2(0, (sample_list.size() - 1));
-
 
     record.setTo(0.0);
 
@@ -1413,11 +1060,7 @@ void generateNextGen() {
     std::mt19937 generator_3(seed_3);
     std::shuffle (order_of_presentation.begin(), order_of_presentation.end(), generator_3);
 
-
-
-
     for (int face_nr = 0; face_nr < 10; ++face_nr) {
-
 
         if (face_nr == 0) { // pick the elite face
 
@@ -1426,7 +1069,6 @@ void generateNextGen() {
                    NumberOfBlendshapes * sizeof(double));
 
             my_data -> copied_exactly_IDs.push_back(order_of_presentation[0]);
-
 
         }  else if (face_nr == 1 && my_data->chosen_rows.size() > 2) {
             // Average selected faces; Note to self: maybe identical to next case if only 2 chosen faces; CORRECTED, SEND TO MUTATE INSTEAD
@@ -1486,8 +1128,6 @@ void generateNextGen() {
                        &my_data->weights_previous_generation[order_of_presentation[2]][0],
                        NumberOfBlendshapes * sizeof(double));
 
-
-
                 my_data -> copied_exactly_IDs.push_back(order_of_presentation[2]);
 
                 continue;
@@ -1532,11 +1172,7 @@ void generateNextGen() {
                    &average[0],
                    NumberOfBlendshapes * sizeof(double));
 
-
-
-
         } else if (face_nr < 6) { // mutation and cross-breeding
-
 
             int chosen_nr1  = distribution_1(generator_1);
             int chosen_nr2 = chosen_nr1;
@@ -1611,24 +1247,16 @@ void generateNextGen() {
                         break;
 
                     }
-
                 }
             }
-
 
             memcpy(&my_data->weights_current_generation[order_of_presentation[face_nr]][0],
                    &random_face[0],
                    NumberOfBlendshapes * sizeof(double));
 
-
-
-
         }
     }
-
-
 }
-
 
 void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
 
@@ -1654,7 +1282,6 @@ void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
 
         double flip = distribution(generator);
 
-
         if (flip < 0.5) {
 
             face_to_cross_breed[blnd_nr] = my_data->weights_previous_generation[my_data->chosen_rows[chosen_nr2]][blnd_nr];
@@ -1674,18 +1301,12 @@ void crossBreed(int chosen_nr2, std::vector<double>&face_to_cross_breed){
                     break;
 
                 }
-
             }
         }
     }
-
-
-
 }
 
-
 void mutateBlendshapes(std::vector<double> &face_to_mutate, double minMR, double MR, std::vector<int>&which_blnd_nrs) {
-
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
@@ -1696,11 +1317,6 @@ void mutateBlendshapes(std::vector<double> &face_to_mutate, double minMR, double
         face_to_mutate[which_blnd_nrs[blnd_nr]] =  distribution(generator);
 
     }
-
-
-
-
-
 }
 
 
@@ -1726,10 +1342,7 @@ std::vector<double> randBlendshapes(double MR, std::vector<int>&which_blnd_nrs) 
 
 }
 
-
-
 void save_result(){
-
 
     if (my_data-> chosen_rows.size() == 0)  return;
 
@@ -1770,13 +1383,9 @@ void save_result(){
     Assimp::Exporter exporter;
     exporter.Export(currentScene, "obj",  output_mesh);
 
-
 }
 
-
-
 void save_result_custom(int face_nr, int id){
-
 
     std::string output_weights;
     output_weights = "/home/nadejda/home/nadejda/EmoGen_data/output/example_to_show_darren/unit_test/unit_test4/" + std::to_string(id) + "_after.txt";
@@ -1815,11 +1424,9 @@ void save_result_custom(int face_nr, int id){
     output_mesh  = "/home/nadejda/home/nadejda/EmoGen_data/output/example_to_show_darren/unit_test/unit_test4/" + std::to_string(id) + ".obj";
     exporter.Export(currentScene, "obj",  output_mesh);
 
-
 }
 
 cv::Mat get_localisation_point_cloud(std::string filename) {
-
 
     Assimp::Importer importer;
     const aiScene * currentScene = importer.ReadFile(Neutral_FILE, aiProcess_JoinIdenticalVertices);
@@ -1903,59 +1510,10 @@ cv::Mat read_csv(std::string input_csv){
 
 }
 
-//void SaveImage(cv::Mat &img, std::string filename)
-//{
-//
-//    if( filename.find(".floatImg") != std::string::npos)
-//    {
-//        // this should be an uncompressed float image.
-//        std::ofstream outfi;
-//        outfi.open( filename, std::ios::out | std::ios::binary );
-//
-//        unsigned magic,w,h,c;
-//        magic = 820830001;
-//        w = img.cols;
-//        h = img.rows;
-//        if( img.type() == CV_32FC1 )
-//        {
-//            c = 1;
-//        }
-//        else if( img.type() == CV_32FC3 )
-//        {
-//            c = 3;
-//        }
-//        else
-//        {
-//            throw std::runtime_error("SaveImage: Image had neither 1 nor 3 channels.");
-//        }
-//        outfi.write( (char*)&magic, sizeof(magic) );
-//        outfi.write( (char*)&w, sizeof(w) );
-//        outfi.write( (char*)&h, sizeof(h) );
-//        outfi.write( (char*)&c, sizeof(c) );
-//
-//        outfi.write( (char*)img.data, h*w*c*sizeof(float) );
-//        return;
-//    }
-//
-//    // todo... use Magick instead of opencv. I have reasons for that... umm...
-//    // honest. Probably mostly to do with OpenCV normalising things etc... maybe...
-//    if( img.type() == CV_32FC3 || img.type() == CV_32FC1 )
-//    {
-//        img *= 255;
-//    }
-//    cv::imwrite(filename, img);
-//}
-
 void save_custom_session(std::vector<std::vector<double>> weights, int generation, std::string user_dir){
 
     int rows = 150;
     int columns = 10;
-
-
-//    std::ofstream myfile_gen;
-//    myfile_gen.open(WEB_BASE_DIRECTORY + user_dir + "/saved_generation.csv");
-//    myfile_gen << generation;
-//    myfile_gen.close();
 
     std::ofstream myfile;
     myfile.open(WEB_BASE_DIRECTORY + user_dir + "/initialisation.csv"); //NOTE: Overwriting, alex
